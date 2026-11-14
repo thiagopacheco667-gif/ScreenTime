@@ -35,3 +35,17 @@ private val LONG_DATE: DateTimeFormatter =
 /** "Sábado, 14 de novembro" */
 fun formatLongDate(date: java.time.LocalDate): String =
     LONG_DATE.format(date).replaceFirstChar { it.titlecase(java.util.Locale.forLanguageTag("pt-BR")) }
+
+private val PT_BR: java.util.Locale = java.util.Locale.forLanguageTag("pt-BR")
+private val WEEKDAY_DAY: DateTimeFormatter = DateTimeFormatter.ofPattern("EEE d", PT_BR)
+private val WEEKDAY_SHORT: DateTimeFormatter = DateTimeFormatter.ofPattern("EEE", PT_BR)
+private val DAY_MONTH: DateTimeFormatter = DateTimeFormatter.ofPattern("d 'de' MMMM", PT_BR)
+
+/** "qui 12" (sem o ponto da abreviação). */
+fun formatWeekdayDay(date: java.time.LocalDate): String = WEEKDAY_DAY.format(date).replace(".", "")
+
+/** "qui" (sem o ponto), para rótulos de gráfico. */
+fun formatWeekdayShort(date: java.time.LocalDate): String = WEEKDAY_SHORT.format(date).replace(".", "")
+
+/** "12 de novembro" */
+fun formatDayMonth(date: java.time.LocalDate): String = DAY_MONTH.format(date)

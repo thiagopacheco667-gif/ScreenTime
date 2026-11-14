@@ -5,6 +5,7 @@ import app.screentime.data.time.SystemTimeSource
 import app.screentime.domain.engine.UsageCalculator
 import app.screentime.domain.repository.TimeSource
 import app.screentime.domain.repository.UsageRepository
+import app.screentime.domain.usecase.GetAppDetailUseCase
 import app.screentime.domain.usecase.GetDashboardUseCase
 import app.screentime.domain.usecase.GetDayEventsUseCase
 import app.screentime.domain.usecase.GetDayUsageUseCase
@@ -43,6 +44,9 @@ object DomainProviders {
 
     @Provides
     fun provideGetDayEvents(repository: UsageRepository) = GetDayEventsUseCase(repository)
+
+    @Provides
+    fun provideGetAppDetail(repository: UsageRepository) = GetAppDetailUseCase(repository)
 
     @Provides
     fun provideGetDashboard(repository: UsageRepository, time: TimeSource) =

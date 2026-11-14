@@ -56,6 +56,9 @@ class UsageRepositoryImpl @Inject constructor(
             events.query(window.dayStart.toEpochMilli(), window.queryEnd.toEpochMilli())
         }
 
+    override suspend fun appLabel(packageName: String): String? =
+        withContext(Dispatchers.IO) { appInfo.labelOf(packageName) }
+
     private fun ensureAccess() {
         if (!accessChecker.hasUsageAccess()) throw UsageAccessMissingException()
     }

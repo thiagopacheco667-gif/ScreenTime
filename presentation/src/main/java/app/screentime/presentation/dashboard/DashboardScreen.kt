@@ -1,21 +1,19 @@
 package app.screentime.presentation.dashboard
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -36,6 +34,8 @@ import app.screentime.domain.model.Comparison
 import app.screentime.domain.model.DataStatus
 import app.screentime.domain.model.Dashboard
 import app.screentime.presentation.R
+import app.screentime.presentation.common.ErrorState
+import app.screentime.presentation.common.LoadingState
 import app.screentime.presentation.common.formatClock
 import app.screentime.presentation.common.formatDuration
 import app.screentime.presentation.common.formatLongDate
@@ -43,6 +43,7 @@ import app.screentime.ui.chart.HourlyBarChart
 import app.screentime.ui.component.AppIcon
 import app.screentime.ui.component.InfoCard
 import app.screentime.ui.component.UsageBar
+import java.time.LocalDate
 
 private const val TOP_APPS = 5
 
@@ -50,6 +51,7 @@ private const val TOP_APPS = 5
 fun DashboardRoute(
     viewModel: DashboardViewModel,
     onOpenDiagnostics: () -> Unit,
+    onOpenApp: (packageName: String, date: LocalDate) -> Unit,
     onPermissionLost: () -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -60,27 +62,19 @@ fun DashboardRoute(
     }
 
     when (val s = state) {
-        DashboardUiState.Loading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
-        }
+        DashboardUiState.Loading -> LoadingState()
         DashboardUiState.PermissionRequired -> LaunchedEffect(Unit) { onPermissionLost() }
-        is DashboardUiState.Error -> Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(WindowInsets.safeDrawing.asPaddingValues())
-                .padding(24.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            Text(stringResource(R.string.diag_error_title), style = MaterialTheme.typography.headlineSmall)
-            Text(s.message, color = MaterialTheme.colorScheme.error)
-            Button(onClick = viewModel::refresh) { Text(stringResource(R.string.diag_retry)) }
-        }
-        is DashboardUiState.Content -> DashboardContent(s.dashboard, onOpenDiagnostics)
+        is DashboardUiState.Error -> ErrorState(s.message, viewModel::refresh)
+        is DashboardUiState.Content -> DashboardContent(s.dashboard, onOpenDiagnostics, onOpenApp)
     }
 }
 
 @Composable
-private fun DashboardContent(dashboard: Dashboard, onOpenDiagnostics: () -> Unit) {
+private fun DashboardContent(
+    dashboard: Dashboard,
+    onOpenDiagnostics: () -> Unit,
+    onOpenApp: (String, LocalDate) -> Unit,
+) {
     val today = dashboard.today
     val zone = today.zoneId
     val currentHour = today.computedAt.atZone(zone).hour
@@ -89,7 +83,7 @@ private fun DashboardContent(dashboard: Dashboard, onOpenDiagnostics: () -> Unit
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(WindowInsets.safeDrawing.asPaddingValues())
+            .windowInsetsPadding(WindowInsets.safeDrawing)
             .padding(horizontal = 20.dp, vertical = 24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
@@ -139,7 +133,13 @@ private fun DashboardContent(dashboard: Dashboard, onOpenDiagnostics: () -> Unit
                 )
             } else {
                 val max = top.first().foregroundMillis.coerceAtLeast(1L)
-                top.forEach { app -> TopAppRow(app, fraction = app.foregroundMillis.toFloat() / max) }
+                top.forEach { app ->
+                    TopAppRow(
+                        app = app,
+                        fraction = app.foregroundMillis.toFloat() / max,
+                        onClick = { onOpenApp(app.packageName, today.date) },
+                    )
+                }
             }
         }
 
@@ -210,9 +210,12 @@ private fun yesterdayLine(dashboard: Dashboard): String =
     }
 
 @Composable
-private fun TopAppRow(app: AppUsage, fraction: Float) {
+private fun TopAppRow(app: AppUsage, fraction: Float, onClick: () -> Unit) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         AppIcon(packageName = app.packageName, label = app.displayName)

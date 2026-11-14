@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -76,7 +76,7 @@ private fun ErrorContent(message: String, onRetry: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(WindowInsets.safeDrawing.asPaddingValues())
+            .windowInsetsPadding(WindowInsets.safeDrawing)
             .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
@@ -94,16 +94,11 @@ private fun DiagnosticsContent(
 ) {
     val day = state.today
     val zone = day.zoneId
-    val insets = WindowInsets.safeDrawing.asPaddingValues()
-
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(
-            start = 20.dp,
-            end = 20.dp,
-            top = insets.calculateTopPadding() + 24.dp,
-            bottom = insets.calculateBottomPadding() + 24.dp,
-        ),
+        modifier = Modifier
+            .fillMaxSize()
+            .windowInsetsPadding(WindowInsets.safeDrawing),
+        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         item {

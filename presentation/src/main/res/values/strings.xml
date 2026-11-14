@@ -73,4 +73,30 @@
     <string name="dash_yesterday_unavailable">O sistema não tem mais os dados de ontem</string>
     <string name="dash_updated_at">Atualizado às %1$s</string>
     <string name="dash_open_diagnostics">Ver diagnóstico da coleta</string>
+
+    <!-- Navegação -->
+    <string name="nav_today">Hoje</string>
+    <string name="nav_apps">Apps</string>
+    <string name="nav_week">Semana</string>
+    <string name="nav_back">Voltar</string>
+
+    <!-- Lista de apps -->
+    <string name="apps_title">Apps</string>
+    <string name="day_today">Hoje</string>
+    <string name="day_yesterday">Ontem</string>
+    <string name="apps_day_total">%1$s no total · %2$d apps</string>
+    <string name="apps_unavailable">O sistema não tem mais os dados deste dia. O histórico salvo no app chega na etapa de persistência.</string>
+    <string name="apps_empty">Nenhum app foi usado neste dia.</string>
+
+    <!-- Detalhe do app -->
+    <string name="detail_not_used">Não usado neste dia</string>
+    <string name="detail_share">%1$d%% do tempo de tela do dia</string>
+    <string name="detail_last7_title">Últimos 7 dias</string>
+    <string name="detail_average">Média: %1$s por dia</string>
+    <string name="detail_average_none">Sem dados suficientes para a média</string>
+    <string name="detail_chart_a11y">Uso de %1$s nos últimos 7 dias</string>
+    <plurals name="detail_sessions">
+        <item quantity="one">Aberto %1$d vez · último uso às %2$s</item>
+        <item quantity="other">Aberto %1$d vezes · último uso às %2$s</item>
+    </plurals>
 </resources>
