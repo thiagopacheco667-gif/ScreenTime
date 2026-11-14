@@ -114,3 +114,16 @@ internal fun AppIconTile(app: WidgetApp, palette: WidgetPalette, size: Dp) {
         }
     }
 }
+
+/** Selo da comparação: fundo colorido (verde = menos uso, coral = mais) e texto em negrito, legível sobre qualquer fundo. */
+@Composable
+internal fun ComparisonPill(percent: Int, palette: WidgetPalette, long: Boolean, time: String) {
+    Box(
+        modifier = GlanceModifier
+            .background(if (percent <= 0) palette.betterBg else palette.worseBg)
+            .cornerRadius(8.dp)
+            .padding(horizontal = 7.dp, vertical = 2.dp),
+    ) {
+        Text(comparisonText(percent, long, time), style = palette.style(11.sp, FontWeight.Bold), maxLines = 1)
+    }
+}

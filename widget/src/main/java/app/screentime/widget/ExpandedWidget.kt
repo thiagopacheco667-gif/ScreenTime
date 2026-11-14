@@ -42,6 +42,7 @@ import app.screentime.widget.data.WidgetApp
 import app.screentime.widget.data.WidgetData
 import app.screentime.widget.ui.AppIconTile
 import app.screentime.widget.ui.ChartRenderer
+import app.screentime.widget.ui.ComparisonPill
 import app.screentime.widget.ui.RefreshButton
 import app.screentime.widget.ui.WidgetFrame
 import app.screentime.widget.ui.WidgetPalette
@@ -59,9 +60,8 @@ import app.screentime.widget.ui.settingsIntent
  */
 class ExpandedWidget : GlanceAppWidget() {
 
-    override val sizeMode: SizeMode = SizeMode.Responsive(
-        setOf(DpSize(250.dp, 110.dp), DpSize(250.dp, 170.dp), DpSize(300.dp, 190.dp), DpSize(340.dp, 220.dp)),
-    )
+    // Tamanho real informado pelo launcher (o HyperOS arredonda para baixo no modo responsivo).
+    override val sizeMode: SizeMode = SizeMode.Exact
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val data = loadWidgetData(context)
@@ -130,7 +130,7 @@ private fun Body(data: WidgetData.Ready, palette: WidgetPalette, width: Dp, heig
     val showCmp = data.settings.widgetShowComparison && data.comparisonPercent != null
 
     val chartWidth = leftWidth - 16.dp - 12.dp
-    val chartHeight = height - 10.dp - 38.dp - (if (showCmp) 16.dp else 0.dp) - 8.dp - 10.dp
+    val chartHeight = height - 10.dp - 38.dp - (if (showCmp) 20.dp else 0.dp) - 8.dp - 10.dp
     val showChart = chartHeight >= 40.dp
     val fit = ((height - 12.dp - 18.dp - 8.dp) / ROW).toInt().coerceIn(1, data.settings.widgetAppCount)
     val apps = data.top.take(fit)
@@ -140,11 +140,8 @@ private fun Body(data: WidgetData.Ready, palette: WidgetPalette, width: Dp, heig
             Text(formatDuration(data.totalMillis), style = palette.style(32.sp, FontWeight.Medium), maxLines = 1)
             val percent = data.comparisonPercent
             if (data.settings.widgetShowComparison && percent != null) {
-                Text(
-                    comparisonText(percent, long = true, time = formatClock(data.updatedAt, data.zone)),
-                    style = palette.style(11.sp, FontWeight.Bold, if (percent <= 0) palette.better else palette.worse),
-                    maxLines = 1,
-                )
+                Spacer(GlanceModifier.height(2.dp))
+                ComparisonPill(percent, palette, long = true, time = formatClock(data.updatedAt, data.zone))
             }
             if (showChart) {
                 Spacer(GlanceModifier.height(8.dp))

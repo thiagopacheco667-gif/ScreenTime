@@ -45,6 +45,8 @@ internal class WidgetPalette(
     val better: GlanceColor = fixed(better)
     val worse: GlanceColor = fixed(worse)
     val tile: GlanceColor = fixed(Color(0x1FFFFFFF))
+    val betterBg: GlanceColor = fixed(better.copy(alpha = 0.30f))
+    val worseBg: GlanceColor = fixed(worse.copy(alpha = 0.30f))
 
     fun style(size: TextUnit, weight: FontWeight = FontWeight.Normal, color: GlanceColor = text) =
         TextStyle(color = color, fontSize = size, fontWeight = weight)
@@ -145,9 +147,9 @@ internal fun launchIntent(context: Context): Intent =
 internal fun settingsIntent(context: Context): Intent =
     launchIntent(context).setData(android.net.Uri.parse("screentime://settings"))
 
-/** Texto da comparação. A cor ("menos" ou "mais") vem da paleta. */
+/** Texto do selo de comparação: curto para caber em qualquer widget. */
 internal fun comparisonText(percent: Int, long: Boolean, time: String): String = when {
-    percent < 0 -> if (long) "▼ ${-percent}% menos que ontem até $time" else "▼ ${-percent}% vs ontem até agora"
-    percent > 0 -> if (long) "▲ $percent% mais que ontem até $time" else "▲ $percent% vs ontem até agora"
-    else -> if (long) "Igual a ontem até $time" else "Igual a ontem até agora"
+    percent < 0 -> if (long) "▼ ${-percent}% vs ontem até $time" else "▼ ${-percent}% vs ontem"
+    percent > 0 -> if (long) "▲ $percent% vs ontem até $time" else "▲ $percent% vs ontem"
+    else -> if (long) "= ontem até $time" else "= ontem"
 }

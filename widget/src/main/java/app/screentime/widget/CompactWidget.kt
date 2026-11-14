@@ -27,9 +27,9 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import app.screentime.domain.model.WidgetKind
 import app.screentime.widget.data.WidgetData
+import app.screentime.widget.ui.ComparisonPill
 import app.screentime.widget.ui.RefreshButton
 import app.screentime.widget.ui.WidgetFrame
-import app.screentime.widget.ui.comparisonText
 import app.screentime.widget.ui.formatClock
 import app.screentime.widget.ui.formatDuration
 import app.screentime.widget.ui.formatShort
@@ -39,7 +39,8 @@ import app.screentime.widget.ui.loadWidgetData
 /** Widget compacto (2×1): total de hoje, app mais usado e horário da atualização. */
 class CompactWidget : GlanceAppWidget() {
 
-    override val sizeMode: SizeMode = SizeMode.Responsive(setOf(SMALL, TALL))
+    // Tamanho real informado pelo launcher (o HyperOS arredonda para baixo no modo responsivo).
+    override val sizeMode: SizeMode = SizeMode.Exact
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val data = loadWidgetData(context)
@@ -100,11 +101,7 @@ private fun CompactContent(data: WidgetData, open: Intent) {
                     val percent = data.comparisonPercent
                     if (tall && data.settings.widgetShowComparison && percent != null) {
                         Spacer(GlanceModifier.height(2.dp))
-                        Text(
-                            comparisonText(percent, long = false, time = ""),
-                            style = palette.style(11.sp, FontWeight.Bold, if (percent <= 0) palette.better else palette.worse),
-                            maxLines = 1,
-                        )
+                        ComparisonPill(percent, palette, long = false, time = "")
                     }
                 }
             }
