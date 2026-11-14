@@ -9,6 +9,7 @@ import app.screentime.domain.usecase.GetAppDetailUseCase
 import app.screentime.domain.usecase.GetDashboardUseCase
 import app.screentime.domain.usecase.GetDayEventsUseCase
 import app.screentime.domain.usecase.GetDayUsageUseCase
+import app.screentime.domain.usecase.GetWeekUsageUseCase
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -47,6 +48,10 @@ object DomainProviders {
 
     @Provides
     fun provideGetAppDetail(repository: UsageRepository) = GetAppDetailUseCase(repository)
+
+    @Provides
+    fun provideGetWeekUsage(repository: UsageRepository, time: TimeSource) =
+        GetWeekUsageUseCase(repository, time)
 
     @Provides
     fun provideGetDashboard(repository: UsageRepository, time: TimeSource) =

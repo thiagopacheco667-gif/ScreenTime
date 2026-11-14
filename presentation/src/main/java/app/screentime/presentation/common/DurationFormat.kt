@@ -49,3 +49,16 @@ fun formatWeekdayShort(date: java.time.LocalDate): String = WEEKDAY_SHORT.format
 
 /** "12 de novembro" */
 fun formatDayMonth(date: java.time.LocalDate): String = DAY_MONTH.format(date)
+
+private val WEEKDAY_LONG: DateTimeFormatter = DateTimeFormatter.ofPattern("EEEE", PT_BR)
+
+/** "quarta-feira" */
+fun formatWeekdayLong(date: java.time.LocalDate): String = WEEKDAY_LONG.format(date)
+
+/** "9 a 15 de novembro" ou "27 de outubro a 2 de novembro" */
+fun formatRange(start: java.time.LocalDate, end: java.time.LocalDate): String =
+    if (start.month == end.month && start.year == end.year) {
+        "${start.dayOfMonth} a ${formatDayMonth(end)}"
+    } else {
+        "${formatDayMonth(start)} a ${formatDayMonth(end)}"
+    }

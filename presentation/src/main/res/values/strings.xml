@@ -99,4 +99,21 @@
         <item quantity="one">Aberto %1$d vez · último uso às %2$s</item>
         <item quantity="other">Aberto %1$d vezes · último uso às %2$s</item>
     </plurals>
+
+    <!-- Semana -->
+    <string name="week_title">Semana</string>
+    <string name="week_this">Esta semana</string>
+    <string name="week_last">Semana passada</string>
+    <string name="week_prev">Semana anterior</string>
+    <string name="week_next">Próxima semana</string>
+    <string name="week_average">Média diária: %1$s</string>
+    <string name="week_days_with_data">%1$d de 7 dias com dados</string>
+    <string name="week_no_data">Sem dados nesta semana. O sistema guarda os eventos por poucos dias; o histórico salvo no app chega na próxima etapa.</string>
+    <string name="week_peak">Maior uso: %1$s, com %2$s</string>
+    <string name="week_chart_a11y">Uso por dia na semana de %1$s, total %2$s</string>
+    <string name="week_days_title">Dias</string>
+    <string name="week_top_title">Mais usados na semana</string>
+    <string name="week_day_no_data">Sem dados</string>
+    <string name="week_day_future">—</string>
+    <string name="week_average_note">A média considera só os dias com dados, incluindo hoje até agora.</string>
 </resources>

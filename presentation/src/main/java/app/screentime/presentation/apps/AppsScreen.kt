@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.FilterChip
@@ -33,6 +34,7 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.screentime.domain.model.AppUsage
 import app.screentime.domain.model.DataStatus
+import app.screentime.domain.model.DayUsage
 import app.screentime.presentation.R
 import app.screentime.presentation.common.ErrorState
 import app.screentime.presentation.common.LoadingState
@@ -102,41 +104,50 @@ private fun AppsContent(
             }
         }
 
-        when {
-            usage.status == DataStatus.Unavailable -> item {
+        dayAppItems(usage, state.selected, onOpenApp)
+    }
+}
+
+/** Itens da lista de apps de um dia (compartilhado com a tela de um dia da semana). */
+internal fun LazyListScope.dayAppItems(
+    usage: DayUsage,
+    date: LocalDate,
+    onOpenApp: (String, LocalDate) -> Unit,
+) {
+    when {
+        usage.status == DataStatus.Unavailable -> item {
+            Text(
+                text = stringResource(R.string.apps_unavailable),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = 20.dp),
+            )
+        }
+        usage.apps.isEmpty() -> item {
+            Text(
+                text = stringResource(R.string.apps_empty),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = 20.dp),
+            )
+        }
+        else -> {
+            item {
                 Text(
-                    text = stringResource(R.string.apps_unavailable),
+                    text = stringResource(R.string.apps_day_total, formatDuration(usage.totalMillis), usage.apps.size),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(horizontal = 20.dp),
+                    modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 8.dp),
                 )
             }
-            usage.apps.isEmpty() -> item {
-                Text(
-                    text = stringResource(R.string.apps_empty),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(horizontal = 20.dp),
+            val max = usage.apps.first().foregroundMillis.coerceAtLeast(1L)
+            items(usage.apps, key = { it.packageName }) { app ->
+                AppListRow(
+                    app = app,
+                    fraction = app.foregroundMillis.toFloat() / max,
+                    zone = usage.zoneId,
+                    onClick = { onOpenApp(app.packageName, date) },
                 )
-            }
-            else -> {
-                item {
-                    Text(
-                        text = stringResource(R.string.apps_day_total, formatDuration(usage.totalMillis), usage.apps.size),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 8.dp),
-                    )
-                }
-                val max = usage.apps.first().foregroundMillis.coerceAtLeast(1L)
-                items(usage.apps, key = { it.packageName }) { app ->
-                    AppListRow(
-                        app = app,
-                        fraction = app.foregroundMillis.toFloat() / max,
-                        zone = usage.zoneId,
-                        onClick = { onOpenApp(app.packageName, state.selected) },
-                    )
-                }
             }
         }
     }

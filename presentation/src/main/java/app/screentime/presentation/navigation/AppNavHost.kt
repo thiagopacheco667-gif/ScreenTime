@@ -24,9 +24,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import app.screentime.presentation.R
 import app.screentime.presentation.apps.AppsRoute
+import app.screentime.presentation.apps.DayAppsRoute
 import app.screentime.presentation.dashboard.DashboardRoute
 import app.screentime.presentation.detail.AppDetailRoute
 import app.screentime.presentation.diagnostics.DiagnosticsRoute
+import app.screentime.presentation.week.WeekRoute
 import app.screentime.ui.icons.ScreenTimeIcons
 import kotlinx.serialization.Serializable
 import java.time.LocalDate
@@ -39,7 +41,14 @@ data object DashboardDestination
 data object AppsDestination
 
 @Serializable
+data object WeekDestination
+
+@Serializable
 data object DiagnosticsDestination
+
+/** Apps de um dia ([epochDay] = LocalDate.toEpochDay()). */
+@Serializable
+data class DayAppsDestination(val epochDay: Long)
 
 /** Detalhe de um app em um dia ([epochDay] = LocalDate.toEpochDay()). */
 @Serializable
@@ -50,6 +59,7 @@ private data class TopLevel(val route: Any, val type: KClass<*>, val label: Int,
 private val topLevels = listOf(
     TopLevel(DashboardDestination, DashboardDestination::class, R.string.nav_today, ScreenTimeIcons.Today),
     TopLevel(AppsDestination, AppsDestination::class, R.string.nav_apps, ScreenTimeIcons.Apps),
+    TopLevel(WeekDestination, WeekDestination::class, R.string.nav_week, ScreenTimeIcons.Week),
 )
 
 /** Navegação entre as telas do app (com o acesso ao uso já concedido). */
@@ -105,6 +115,22 @@ fun AppNavHost(
             composable<AppsDestination> {
                 AppsRoute(
                     viewModel = hiltViewModel(),
+                    onOpenApp = openApp,
+                    onPermissionLost = onPermissionLost,
+                )
+            }
+            composable<WeekDestination> {
+                WeekRoute(
+                    viewModel = hiltViewModel(),
+                    onOpenDay = { date -> navController.navigate(DayAppsDestination(date.toEpochDay())) },
+                    onOpenApp = openApp,
+                    onPermissionLost = onPermissionLost,
+                )
+            }
+            composable<DayAppsDestination> {
+                DayAppsRoute(
+                    viewModel = hiltViewModel(),
+                    onBack = { navController.popBackStack() },
                     onOpenApp = openApp,
                     onPermissionLost = onPermissionLost,
                 )

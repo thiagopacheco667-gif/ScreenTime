@@ -92,4 +92,15 @@ object ScreenTimeIcons {
             }
         }
     }
+
+    /** Seta para avançar. */
+    val Forward: ImageVector by lazy {
+        icon("Forward") {
+            stroke {
+                moveTo(9f, 5f)
+                lineTo(16f, 12f)
+                lineTo(9f, 19f)
+            }
+        }
+    }
 }
