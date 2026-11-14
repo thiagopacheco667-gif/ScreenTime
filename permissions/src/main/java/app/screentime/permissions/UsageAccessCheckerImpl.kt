@@ -25,7 +25,10 @@ class UsageAccessCheckerImpl @Inject constructor(
 
     override fun hasUsageAccess(): Boolean {
         val appOps = context.getSystemService(AppOpsManager::class.java) ?: return false
+        // As duas formas ficaram obsoletas no SDK 37, mas seguem funcionando em
+        // todas as versões suportadas e são as únicas que existem do Android 8 ao 16.
         val mode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            @Suppress("DEPRECATION")
             appOps.unsafeCheckOpNoThrow(
                 AppOpsManager.OPSTR_GET_USAGE_STATS,
                 Process.myUid(),
