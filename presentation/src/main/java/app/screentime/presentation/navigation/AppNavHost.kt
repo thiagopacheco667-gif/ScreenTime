@@ -126,6 +126,7 @@ fun AppNavHost(
                     viewModel = hiltViewModel(),
                     onOpenSettings = { navController.navigate(SettingsDestination) },
                     onOpenApp = openApp,
+                    onOpenAllApps = { navController.navigateTopLevel(AppsDestination) },
                     onPermissionLost = onPermissionLost,
                 )
             }

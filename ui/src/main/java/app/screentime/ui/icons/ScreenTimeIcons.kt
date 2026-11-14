@@ -103,4 +103,46 @@ object ScreenTimeIcons {
             }
         }
     }
+
+    /** Seta para baixo (menos uso). */
+    val ArrowDown: ImageVector by lazy {
+        icon("ArrowDown") {
+            stroke {
+                moveTo(12f, 5f); lineTo(12f, 19f)
+                moveTo(5f, 12f); lineTo(12f, 19f); lineTo(19f, 12f)
+            }
+        }
+    }
+
+    /** Seta para cima (mais uso). */
+    val ArrowUp: ImageVector by lazy {
+        icon("ArrowUp") {
+            stroke {
+                moveTo(12f, 19f); lineTo(12f, 5f)
+                moveTo(5f, 12f); lineTo(12f, 5f); lineTo(19f, 12f)
+            }
+        }
+    }
+
+    /** Engrenagem simples: Ajustes. */
+    val Settings: ImageVector by lazy {
+        icon("Settings") {
+            stroke {
+                moveTo(12f, 9f)
+                arcToRelative(3f, 3f, 0f, true, true, 0f, 6f)
+                arcToRelative(3f, 3f, 0f, true, true, 0f, -6f)
+                close()
+            }
+            stroke {
+                moveTo(12f, 2.5f); verticalLineTo(5.5f)
+                moveTo(12f, 18.5f); verticalLineTo(21.5f)
+                moveTo(2.5f, 12f); horizontalLineTo(5.5f)
+                moveTo(18.5f, 12f); horizontalLineTo(21.5f)
+                moveTo(5.3f, 5.3f); lineTo(7.4f, 7.4f)
+                moveTo(16.6f, 16.6f); lineTo(18.7f, 18.7f)
+                moveTo(5.3f, 18.7f); lineTo(7.4f, 16.6f)
+                moveTo(16.6f, 7.4f); lineTo(18.7f, 5.3f)
+            }
+        }
+    }
 }

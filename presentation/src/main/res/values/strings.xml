@@ -64,8 +64,8 @@
     <string name="dash_hourly_a11y">Gráfico do uso por hora hoje, total %1$s</string>
     <string name="dash_peak_hour">Hora de maior uso: %1$dh, com %2$s</string>
     <string name="dash_top_title">Mais usados hoje</string>
-    <string name="dash_cmp_more">%1$d%% a mais que ontem até %2$s</string>
-    <string name="dash_cmp_less">%1$d%% a menos que ontem até %2$s</string>
+    <string name="dash_cmp_more">%1$d%% mais que ontem até %2$s</string>
+    <string name="dash_cmp_less">%1$d%% menos que ontem até %2$s</string>
     <string name="dash_cmp_same">Igual a ontem até %1$s</string>
     <string name="dash_cmp_no_baseline">Ontem não houve uso até %1$s</string>
     <string name="dash_cmp_unavailable">Sem dados de ontem para comparar</string>
@@ -183,4 +183,27 @@
     <string name="appearance_animations">Animações</string>
     <string name="appearance_animations_sub">números contando e gráficos crescendo. Se o Android estiver com animações desligadas, elas ficam desligadas aqui também.</string>
     <string name="appearance_widgets_soon">Estilo, imagem de fundo e quantidade de apps dos widgets entram nesta tela na atualização dos widgets.</string>
+
+    <!-- Painel (redesign) -->
+    <string name="dash_hero_label">TEMPO DE TELA HOJE</string>
+    <string name="dash_hero_sub">até agora · atualizado às %1$s</string>
+    <string name="dash_hourly_sub">minutos de tela em cada hora de hoje</string>
+    <string name="dash_compare_off">Comparar com ontem</string>
+    <string name="dash_compare_on">Comparando com ontem</string>
+    <string name="dash_tip_title">%1$s–%2$s · %3$s</string>
+    <string name="dash_tip_no_use">sem uso</string>
+    <string name="dash_tip_now">hora atual (ainda em andamento)</string>
+    <string name="dash_tip_future">esta hora ainda não chegou</string>
+    <string name="dash_tip_yesterday">ontem nesta hora: %1$s</string>
+    <string name="dash_tip_yesterday_none">sem dados de ontem para comparar</string>
+    <string name="dash_tip_hint">toque ou arraste nas barras para ver cada hora</string>
+    <string name="dash_legend_today">Hoje</string>
+    <string name="dash_legend_selected">Selecionada</string>
+    <string name="dash_legend_yesterday">Ontem</string>
+    <string name="dash_top_sub">barra = tempo comparado ao 1º da lista</string>
+    <string name="dash_see_all">Ver todos</string>
+    <plurals name="dash_app_sub">
+        <item quantity="one">aberto %1$d× · último às %2$s · %3$d%% do dia</item>
+        <item quantity="other">aberto %1$d× · último às %2$s · %3$d%% do dia</item>
+    </plurals>
 </resources>
