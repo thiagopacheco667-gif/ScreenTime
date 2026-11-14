@@ -206,4 +206,43 @@
         <item quantity="one">aberto %1$d× · último às %2$s · %3$d%% do dia</item>
         <item quantity="other">aberto %1$d× · último às %2$s · %3$d%% do dia</item>
     </plurals>
+
+    <!-- Apps (redesign) -->
+    <string name="apps_subtitle">Escolha um dia para ver o tempo de cada app</string>
+    <string name="apps_hero_today">Hoje até agora</string>
+    <string name="apps_hero_yesterday">Ontem · %1$s, %2$d</string>
+    <string name="apps_hero_day">%1$s, %2$d</string>
+    <string name="apps_order_label">Do mais usado ao menos usado</string>
+    <string name="apps_share">%1$d%% do dia</string>
+    <plurals name="apps_opened_count">
+        <item quantity="one">%1$d app aberto</item>
+        <item quantity="other">%1$d apps abertos</item>
+    </plurals>
+    <plurals name="apps_row_sub">
+        <item quantity="one">aberto %1$d× · último às %2$s</item>
+        <item quantity="other">aberto %1$d× · último às %2$s</item>
+    </plurals>
+
+    <!-- Semana (redesign) -->
+    <string name="week_range_long">segunda %1$d a domingo %2$s</string>
+    <string name="week_tile_total">Total</string>
+    <string name="week_tile_total_note">em %1$d dias</string>
+    <string name="week_tile_average">Média/dia</string>
+    <string name="week_tile_average_note">dias com dados</string>
+    <string name="week_tile_peak">Maior uso</string>
+    <string name="week_chart_title">Tempo de tela por dia</string>
+    <string name="week_chart_sub">linha tracejada = média diária (%1$s)</string>
+    <string name="week_chart_sub_none">toque numa barra para ver o dia</string>
+    <string name="week_day_future_long">ainda não chegou</string>
+    <string name="week_tip_future">este dia ainda não chegou</string>
+    <string name="week_tip_no_data">o Android já apagou os eventos deste dia</string>
+    <string name="week_tip_above">%1$s acima da média</string>
+    <string name="week_tip_below">%1$s abaixo da média</string>
+    <string name="week_tip_today_suffix"> · dia ainda em andamento</string>
+    <string name="week_today_named">hoje, %1$s %2$d</string>
+    <string name="week_note_peak">maior uso da semana</string>
+    <string name="week_note_today">até agora</string>
+    <string name="week_note_above">acima da média</string>
+    <string name="week_note_below">abaixo da média</string>
+    <string name="detail_chart_legend">em destaque, o dia escolhido · linha tracejada = média</string>
 </resources>

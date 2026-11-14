@@ -32,8 +32,6 @@ import app.screentime.domain.usecase.GetDayUsageUseCase
 import app.screentime.presentation.R
 import app.screentime.presentation.common.ErrorState
 import app.screentime.presentation.common.LoadingState
-import app.screentime.presentation.common.dayLabel
-import app.screentime.presentation.common.formatDayMonth
 import app.screentime.presentation.navigation.DayAppsDestination
 import app.screentime.ui.icons.ScreenTimeIcons
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -102,30 +100,17 @@ fun DayAppsRoute(
             modifier = Modifier
                 .fillMaxSize()
                 .windowInsetsPadding(WindowInsets.safeDrawing),
-            contentPadding = PaddingValues(vertical = 12.dp),
+            contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 24.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             item {
-                Column(Modifier.padding(horizontal = 8.dp)) {
+                Column(Modifier.padding(bottom = 4.dp)) {
                     IconButton(onClick = onBack) {
                         Icon(ScreenTimeIcons.Back, contentDescription = stringResource(R.string.nav_back))
                     }
                 }
             }
-            item {
-                Column(Modifier.padding(start = 20.dp, end = 20.dp, bottom = 8.dp)) {
-                    Text(
-                        text = dayLabel(viewModel.date, s.today).replaceFirstChar { it.uppercase() },
-                        style = MaterialTheme.typography.headlineMedium,
-                    )
-                    Text(
-                        text = formatDayMonth(viewModel.date),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-            }
-            dayAppItems(s.usage, viewModel.date, onOpenApp)
+            dayAppItems(s.usage, viewModel.date, s.today, onOpenApp)
         }
     }
 }

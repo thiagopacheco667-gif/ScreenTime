@@ -1,5 +1,14 @@
 package app.screentime.presentation.navigation
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.navigation.NavDestination
+import app.screentime.ui.theme.ScreenTimeTheme
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -79,6 +88,7 @@ fun AppNavHost(
     openSettingsRequest: Int = 0,
 ) {
     val navController = rememberNavController()
+    val motion = ScreenTimeTheme.motion
 
     // Engrenagem do widget: abre os Ajustes por cima do painel.
     LaunchedEffect(openSettingsRequest) {
@@ -120,6 +130,22 @@ fun AppNavHost(
             modifier = Modifier
                 .padding(inner)
                 .consumeWindowInsets(inner),
+            // Uma tela sai rápido antes da outra entrar: nunca as duas sobrepostas.
+            enterTransition = {
+                if (!motion) {
+                    EnterTransition.None
+                } else {
+                    val dir = direction(initialState.destination, targetState.destination)
+                    fadeIn(tween(220, delayMillis = 90)) + slideInHorizontally(tween(260, delayMillis = 60)) { it / 8 * dir }
+                }
+            },
+            exitTransition = { if (!motion) ExitTransition.None else fadeOut(tween(90)) },
+            popEnterTransition = {
+                if (!motion) EnterTransition.None else fadeIn(tween(220, delayMillis = 90)) + slideInHorizontally(tween(260, delayMillis = 60)) { -it / 8 }
+            },
+            popExitTransition = {
+                if (!motion) ExitTransition.None else fadeOut(tween(90)) + slideOutHorizontally(tween(160)) { it / 10 }
+            },
         ) {
             composable<DashboardDestination> {
                 DashboardRoute(
@@ -192,4 +218,14 @@ private fun NavHostController.navigateTopLevel(route: Any) {
         launchSingleTop = true
         restoreState = true
     }
+}
+
+/**
+ * Direção do deslize: +1 = entra pela direita (avançar), -1 = pela esquerda.
+ * Entre abas segue a ordem Hoje → Apps → Semana; telas abertas por cima entram pela direita.
+ */
+private fun direction(from: NavDestination, to: NavDestination): Int {
+    val a = topLevels.indexOfFirst { from.hasRoute(it.type) }
+    val b = topLevels.indexOfFirst { to.hasRoute(it.type) }
+    return if (a >= 0 && b >= 0 && b < a) -1 else 1
 }

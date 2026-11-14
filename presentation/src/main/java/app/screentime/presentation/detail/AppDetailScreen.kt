@@ -36,9 +36,12 @@ import app.screentime.presentation.common.formatClock
 import app.screentime.presentation.common.formatDayMonth
 import app.screentime.presentation.common.formatDuration
 import app.screentime.presentation.common.formatWeekdayShort
-import app.screentime.ui.chart.DailyBarChart
+import app.screentime.ui.chart.DayBarsChart
 import app.screentime.ui.component.AppIcon
-import app.screentime.ui.component.InfoCard
+import app.screentime.ui.component.UsageBar
+import app.screentime.presentation.common.HeroCard
+import app.screentime.presentation.common.SectionCard
+import app.screentime.presentation.common.animatedMillis
 import app.screentime.ui.icons.ScreenTimeIcons
 import kotlin.math.roundToInt
 
@@ -66,6 +69,7 @@ fun AppDetailRoute(
 @Composable
 private fun AppDetailContent(state: AppDetailUiState.Content, onBack: () -> Unit) {
     val d = state.detail
+    val usage = d.usage
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -74,12 +78,12 @@ private fun AppDetailContent(state: AppDetailUiState.Content, onBack: () -> Unit
             .padding(horizontal = 20.dp, vertical = 12.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        IconButton(onClick = onBack, modifier = Modifier.padding(start = 0.dp)) {
+        IconButton(onClick = onBack) {
             Icon(ScreenTimeIcons.Back, contentDescription = stringResource(R.string.nav_back))
         }
 
         Row(verticalAlignment = Alignment.CenterVertically) {
-            AppIcon(packageName = d.packageName, label = d.displayName, size = 56.dp)
+            AppIcon(packageName = d.packageName, label = d.displayName, size = 60.dp)
             Spacer(Modifier.width(16.dp))
             Column(Modifier.weight(1f)) {
                 Text(
@@ -98,25 +102,21 @@ private fun AppDetailContent(state: AppDetailUiState.Content, onBack: () -> Unit
             }
         }
 
-        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        HeroCard {
             Text(
-                text = "${dayLabel(d.date, state.today)} · ${formatDayMonth(d.date)}",
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                "${dayLabel(d.date, state.today)} · ${formatDayMonth(d.date)}".uppercase(),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.primary,
             )
-            val usage = d.usage
             when {
                 d.dayStatus == DataStatus.Unavailable -> Text(
                     stringResource(R.string.apps_unavailable),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-                usage == null -> Text(
-                    stringResource(R.string.detail_not_used),
-                    style = MaterialTheme.typography.headlineMedium,
-                )
+                usage == null -> Text(stringResource(R.string.detail_not_used), style = MaterialTheme.typography.headlineSmall)
                 else -> {
-                    Text(formatDuration(usage.foregroundMillis), style = MaterialTheme.typography.displayMedium)
+                    Text(formatDuration(animatedMillis(usage.foregroundMillis)), style = MaterialTheme.typography.displayMedium)
                     val last = usage.lastUsedAt?.let { formatClock(it, state.zone) } ?: "—"
                     Text(
                         text = pluralStringResource(R.plurals.detail_sessions, usage.sessionCount, usage.sessionCount, last),
@@ -124,27 +124,39 @@ private fun AppDetailContent(state: AppDetailUiState.Content, onBack: () -> Unit
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     d.shareOfDay?.let { share ->
-                        Text(
-                            text = stringResource(R.string.detail_share, (share * 100).roundToInt()),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
+                        Column(verticalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.padding(top = 6.dp)) {
+                            Text(
+                                text = stringResource(R.string.detail_share, (share * 100).roundToInt()),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                            UsageBar(share, delayMillis = 300)
+                        }
                     }
                 }
             }
         }
 
-        InfoCard(title = stringResource(R.string.detail_last7_title)) {
-            DailyBarChart(
+        SectionCard {
+            Column {
+                Text(stringResource(R.string.detail_last7_title), style = MaterialTheme.typography.titleMedium)
+                Text(
+                    text = d.averageMillis?.let { stringResource(R.string.detail_average, formatDuration(it)) }
+                        ?: stringResource(R.string.detail_average_none),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            DayBarsChart(
                 values = d.lastDays.map { it.millis },
                 labels = d.lastDays.map { formatWeekdayShort(it.date) },
-                highlightIndex = d.lastDays.lastIndex,
+                selectedIndex = d.lastDays.lastIndex,
                 averageMillis = d.averageMillis,
                 contentDescription = stringResource(R.string.detail_chart_a11y, d.displayName),
+                height = 150.dp,
             )
             Text(
-                text = d.averageMillis?.let { stringResource(R.string.detail_average, formatDuration(it)) }
-                    ?: stringResource(R.string.detail_average_none),
+                stringResource(R.string.detail_chart_legend),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

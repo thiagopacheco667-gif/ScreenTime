@@ -62,3 +62,8 @@ fun formatRange(start: java.time.LocalDate, end: java.time.LocalDate): String =
     } else {
         "${formatDayMonth(start)} a ${formatDayMonth(end)}"
     }
+
+private val MONTH: DateTimeFormatter = DateTimeFormatter.ofPattern("MMMM", PT_BR)
+
+/** "novembro" */
+fun formatMonth(date: java.time.LocalDate): String = MONTH.format(date)
