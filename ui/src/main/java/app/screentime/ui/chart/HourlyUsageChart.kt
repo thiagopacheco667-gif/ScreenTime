@@ -85,7 +85,7 @@ fun HourlyUsageChart(
     )
     val peakMinutes = max(
         today.maxOrNull() ?: 0L,
-        if (ghostVisible) yesterday?.maxOrNull() ?: 0L else 0L,
+        if (ghostVisible) yesterday.maxOrNull() ?: 0L else 0L,
     ) / 60_000f
     val scale = SCALES.firstOrNull { it >= peakMinutes } ?: 60
     val animatedScale by animateFloatAsState(
