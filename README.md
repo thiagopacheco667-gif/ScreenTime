@@ -2,9 +2,15 @@
 
 App Android que mede o tempo de uso real do celular a partir dos eventos do sistema (`UsageStatsManager`/`UsageEvents`). Tudo fica no aparelho: o app não tem permissão de internet.
 
-## Estado atual: etapa 2 de 8
+## Estado atual: etapas 1 a 9 concluídas
 
-Estrutura de módulos, Gradle, manifesto, tema claro/escuro e uma tela temporária que confirma que o projeto compila.
+- Permissão de acesso ao uso com explicação e verificação automática.
+- Coleta real a partir de `UsageEvents`, com 38 testes do cálculo (meia-noite, tela bloqueada, reinício, horário de verão).
+- Painel de hoje com comparação com ontem até o mesmo horário e gráfico por hora.
+- Lista de apps por dia, detalhe de cada app e histórico semanal.
+- Histórico salvo em Room, sincronização a cada 30 min com WorkManager.
+- Widgets compacto e expandido (Glance) com o horário da última atualização.
+- Ajustes: bateria e HyperOS, histórico salvo, critérios do cálculo e diagnóstico.
 
 ## Como instalar pelo celular
 
@@ -35,14 +41,6 @@ Android Studio estável recente, SDK Platform 37, **File > Open** na pasta do pr
 | compileSdk / targetSdk / minSdk | 37 / 36 / 26 |
 
 Todas ficam em `gradle/libs.versions.toml`.
-
-## Verificação desta etapa
-
-- O Gradle Sync termina sem erros.
-- O app instala e abre mostrando "ScreenTime" e a mensagem de estrutura pronta.
-- Com o modo escuro do celular ligado, o fundo fica grafite.
-
-Se a execução no Actions ficar vermelha, o erro aparece no log da etapa que falhou.
 
 ## Módulos
 
