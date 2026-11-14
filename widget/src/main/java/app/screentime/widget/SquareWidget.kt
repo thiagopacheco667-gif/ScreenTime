@@ -102,7 +102,7 @@ private fun Ready(data: WidgetData.Ready, palette: WidgetPalette) {
     val size = LocalSize.current
     val innerWidth = size.width - PAD * 2
     val percent = data.comparisonPercent
-    val wantsPill = data.settings.widgetShowComparison && percent != null
+    val wantsPill = data.settings.widgetShowComparison
 
     var free = size.height - PAD * 2 - TOP_ROW - TOTAL - 6.dp
     val wanted = minOf(data.settings.widgetAppCount, data.top.size).coerceAtLeast(0)
@@ -132,7 +132,7 @@ private fun Ready(data: WidgetData.Ready, palette: WidgetPalette) {
         maxLines = 1,
         modifier = GlanceModifier.height(TOTAL),
     )
-    if (showPill && percent != null) {
+    if (percent != null && showPill) {
         Box(GlanceModifier.height(PILL)) { ComparisonPill(percent, palette, long = false, time = "") }
     }
     if (showChart) {
