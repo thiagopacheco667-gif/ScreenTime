@@ -69,4 +69,32 @@ class DayPersistencePolicyTest {
         assertEquals(25 * 60_000L, d.result.totalMillis)
         assertTrue(d.save)
     }
+
+    @Test
+    fun `dia salvo com regra antiga e recalculado quando os eventos ainda existem`() {
+        val stored = day(120, final = true)
+        assertTrue(DayPersistencePolicy.needsLive(stored, storedVersion = 1))
+        val live = day(119, final = true)
+        val d = DayPersistencePolicy.choose(stored, live, storedVersion = 1)
+        assertSame(live, d.result)
+        assertTrue(d.save)
+    }
+
+    @Test
+    fun `dia antigo com eventos ja apagados mantem o salvo e marca como conferido`() {
+        val stored = day(120, final = true)
+        val partial = day(40, final = true)
+        val d = DayPersistencePolicy.choose(stored, partial, storedVersion = 1)
+        assertSame(stored, d.result)
+        assertFalse(d.save)
+        assertTrue(d.markChecked)
+    }
+
+    @Test
+    fun `dia antigo sem nenhum evento mantem o salvo`() {
+        val stored = day(120, final = true)
+        val d = DayPersistencePolicy.choose(stored, day(0, final = false, available = false), storedVersion = 1)
+        assertSame(stored, d.result)
+        assertTrue(d.markChecked)
+    }
 }

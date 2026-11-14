@@ -2,6 +2,8 @@ package app.screentime.data.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 
 /**
  * Banco local. Fica só no aparelho: o app não tem internet e o backup está desligado.
@@ -9,7 +11,7 @@ import androidx.room.RoomDatabase
  */
 @Database(
     entities = [DaySummaryEntity::class, AppUsageDailyEntity::class, AppMetadataEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = true,
 )
 abstract class ScreenTimeDatabase : RoomDatabase() {
@@ -17,5 +19,12 @@ abstract class ScreenTimeDatabase : RoomDatabase() {
 
     companion object {
         const val NAME = "screentime.db"
+
+        /** v2: coluna calcVersion, para recalcular dias salvos com regras antigas. */
+        val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE day_summary ADD COLUMN calcVersion INTEGER NOT NULL DEFAULT 1")
+            }
+        }
     }
 }

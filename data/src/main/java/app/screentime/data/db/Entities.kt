@@ -1,5 +1,6 @@
 package app.screentime.data.db
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
@@ -17,6 +18,8 @@ data class DaySummaryEntity(
     val isFinal: Boolean,
     val zoneId: String,
     val computedAt: Long,
+    /** Versão das regras de cálculo usadas (ver DayPersistencePolicy.CURRENT_CALC_VERSION). */
+    @ColumnInfo(defaultValue = "1") val calcVersion: Int = 1,
 )
 
 /** Tempo de um app em um dia. */

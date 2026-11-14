@@ -195,6 +195,7 @@ fun SettingsRoute(
             BulletRow(stringResource(R.string.settings_method_4))
             BulletRow(stringResource(R.string.settings_method_5))
             BulletRow(stringResource(R.string.settings_method_6))
+            BulletRow(stringResource(R.string.settings_method_7))
             Text(
                 text = stringResource(R.string.settings_method_note),
                 style = MaterialTheme.typography.bodySmall,

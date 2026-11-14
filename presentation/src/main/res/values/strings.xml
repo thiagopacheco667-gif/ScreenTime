@@ -152,6 +152,7 @@
     <string name="settings_method_3">Tela desligada ou bloqueada encerra a contagem.</string>
     <string name="settings_method_4">Uso que atravessa a meia-noite é dividido entre os dois dias.</string>
     <string name="settings_method_5">A tela inicial (launcher) e a interface do sistema não contam.</string>
+    <string name="settings_method_7">“Aberto N×” conta visitas ao app. Voltar em até 30 segundos sem usar outro app (depois de compartilhar, escolher uma foto, fazer login ou a tela apagar rapidinho) é a mesma visita.</string>
     <string name="settings_method_6">A comparação com ontem usa ontem até o mesmo horário de agora.</string>
     <string name="settings_method_note">O Bem-estar digital do Android não publica os critérios que usa, então pequenas diferenças são esperadas.</string>
     <string name="settings_privacy_3">Apagar o histórico aqui não afeta nenhum dado do sistema.</string>

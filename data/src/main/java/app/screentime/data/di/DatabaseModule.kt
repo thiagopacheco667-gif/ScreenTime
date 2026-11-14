@@ -19,7 +19,9 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): ScreenTimeDatabase =
-        Room.databaseBuilder(context, ScreenTimeDatabase::class.java, ScreenTimeDatabase.NAME).build()
+        Room.databaseBuilder(context, ScreenTimeDatabase::class.java, ScreenTimeDatabase.NAME)
+            .addMigrations(ScreenTimeDatabase.MIGRATION_1_2)
+            .build()
 
     @Provides
     fun provideUsageDao(db: ScreenTimeDatabase): UsageDao = db.usageDao()

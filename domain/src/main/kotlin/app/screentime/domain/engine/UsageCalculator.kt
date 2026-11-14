@@ -12,6 +12,7 @@ import java.time.Instant
  */
 class UsageCalculator(
     private val sessionBuilder: SessionBuilder = SessionBuilder(),
+    private val openCounter: OpenCounter = OpenCounter(),
 ) {
 
     /**
@@ -46,16 +47,17 @@ class UsageCalculator(
             upTo?.toEpochMilli() ?: Long.MAX_VALUE,
         )
 
-        val clipped = sessionBuilder
+        // Sessões de todos os pacotes, cortadas no dia: a contagem de aberturas precisa
+        // saber o que ficou na tela entre uma visita e outra (inclusive launcher e sistema).
+        val allClipped = sessionBuilder
             .build(events, window.queryStart.toEpochMilli(), window.queryEnd.toEpochMilli())
-            .asSequence()
-            .filter { it.packageName !in excludedPackages }
             .mapNotNull { s ->
                 val start = maxOf(s.start, dayStart)
                 val end = minOf(s.end, limitEnd)
                 if (end > start) Session(s.packageName, start, end) else null
             }
-            .toList()
+        val opens = openCounter.count(allClipped)
+        val clipped = allClipped.filter { it.packageName !in excludedPackages }
 
         val apps = clipped
             .groupBy { it.packageName }
@@ -64,7 +66,7 @@ class UsageCalculator(
                     packageName = pkg,
                     label = labelOf(pkg),
                     foregroundMillis = sessions.sumOf { it.durationMillis },
-                    sessionCount = sessions.size,
+                    sessionCount = opens[pkg] ?: sessions.size,
                     lastUsedAt = Instant.ofEpochMilli(sessions.maxOf { it.end }),
                 )
             }

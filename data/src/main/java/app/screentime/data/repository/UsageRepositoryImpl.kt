@@ -57,8 +57,9 @@ class UsageRepositoryImpl @Inject constructor(
                 return@withContext computeLive(date, zone, now, upTo)
             }
 
+            val storedVersion = dao.day(date.toEpochDay())?.calcVersion ?: DayPersistencePolicy.CURRENT_CALC_VERSION
             val stored = loadStored(date)
-            if (stored != null && !DayPersistencePolicy.needsLive(stored)) {
+            if (stored != null && !DayPersistencePolicy.needsLive(stored, storedVersion)) {
                 return@withContext stored
             }
             if (!accessChecker.hasUsageAccess()) {
@@ -66,8 +67,11 @@ class UsageRepositoryImpl @Inject constructor(
             }
 
             val live = computeLive(date, zone, now, null)
-            val decision = DayPersistencePolicy.choose(stored, live)
+            val decision = DayPersistencePolicy.choose(stored, live, storedVersion)
             if (decision.save) save(decision.result)
+            if (decision.markChecked) {
+                writeLock.withLock { dao.markChecked(date.toEpochDay(), DayPersistencePolicy.CURRENT_CALC_VERSION) }
+            }
             decision.result
         }
 
@@ -171,6 +175,7 @@ class UsageRepositoryImpl @Inject constructor(
                     isFinal = day.isFinal,
                     zoneId = day.zoneId.id,
                     computedAt = day.computedAt.toEpochMilli(),
+                    calcVersion = DayPersistencePolicy.CURRENT_CALC_VERSION,
                 ),
                 apps = day.apps.map {
                     AppUsageDailyEntity(

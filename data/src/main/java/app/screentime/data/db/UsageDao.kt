@@ -19,6 +19,9 @@ abstract class UsageDao {
     @Query("SELECT * FROM app_metadata WHERE packageName IN (:packages)")
     abstract suspend fun labels(packages: List<String>): List<AppMetadataEntity>
 
+    @Query("UPDATE day_summary SET calcVersion = :version WHERE epochDay = :epochDay")
+    abstract suspend fun markChecked(epochDay: Long, version: Int)
+
     @Query("SELECT COUNT(*) FROM day_summary")
     abstract suspend fun countDays(): Int
 
