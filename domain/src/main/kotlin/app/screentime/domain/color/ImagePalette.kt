@@ -39,10 +39,11 @@ data class WidgetImageColors(
          * (o fundo mais claro possível), a opacidade sobe até ter.
          */
         fun from(palette: ImagePalette, dimPercent: Int): WidgetImageColors {
-            val start = ColorMath.towards(palette.dark, ColorMath.BLACK, 0.35f)
-            var end = ColorMath.towards(ColorMath.blend(palette.vivid, palette.dark, 0.45f), ColorMath.BLACK, 0.25f)
-            // O fim do degradê precisa ser escuro o bastante para o texto branco.
-            end = ColorMath.ensureContrast(end, ColorMath.WHITE, 7.0).let { if (ColorMath.contrast(it, ColorMath.WHITE) >= 7.0) it else ColorMath.BLACK }
+            // As duas pontas do degradê precisam ser escuras o bastante para o texto branco
+            // (7:1 sozinhas garante 4,5:1 mesmo sobre uma foto branca com o overlay no máximo).
+            fun darkEnough(c: Int) = ColorMath.ensureContrast(c, ColorMath.WHITE, 7.0)
+            val start = darkEnough(ColorMath.towards(palette.dark, ColorMath.BLACK, 0.35f))
+            val end = darkEnough(ColorMath.towards(ColorMath.blend(palette.vivid, palette.dark, 0.45f), ColorMath.BLACK, 0.25f))
 
             // Pior caso do fundo: a parte mais clara da foto (média clareada) sob o overlay.
             val brightest = ColorMath.towards(palette.average, palette.light, 0.5f)
