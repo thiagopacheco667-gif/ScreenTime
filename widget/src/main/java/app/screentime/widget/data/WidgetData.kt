@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import androidx.core.graphics.drawable.toBitmap
+import app.screentime.domain.color.ImagePalette
 import app.screentime.domain.model.AppearanceSettings
 import app.screentime.domain.model.Comparison
 import app.screentime.domain.repository.SettingsRepository
@@ -27,11 +28,15 @@ sealed interface WidgetData {
     val backgroundPath: String?
     val backgroundVersion: Long
 
+    /** Cores tiradas da imagem de fundo (nulo sem imagem). */
+    val imagePalette: ImagePalette?
+
     /** Sem acesso ao uso: o widget pede para abrir o app. */
     data class NoAccess(
         override val settings: AppearanceSettings,
         override val backgroundPath: String?,
         override val backgroundVersion: Long,
+        override val imagePalette: ImagePalette?,
     ) : WidgetData
 
     /**
@@ -48,6 +53,7 @@ sealed interface WidgetData {
         override val settings: AppearanceSettings,
         override val backgroundPath: String?,
         override val backgroundVersion: Long,
+        override val imagePalette: ImagePalette?,
     ) : WidgetData {
         val currentHour: Int get() = updatedAt.atZone(zone).hour
     }
@@ -76,13 +82,14 @@ class WidgetDataSource @Inject constructor(
         val settings = settingsRepository.current()
         val path = backgroundStore.imagePath()
         val version = backgroundStore.version()
-        if (!accessChecker.hasUsageAccess()) return WidgetData.NoAccess(settings, path, version)
+        val imagePalette = if (path != null) runCatching { backgroundStore.palette() }.getOrNull() else null
+        if (!accessChecker.hasUsageAccess()) return WidgetData.NoAccess(settings, path, version, imagePalette)
 
         val today = time.today()
         val day = try {
             repository.cachedDayUsage(today) ?: repository.dayUsage(today)
         } catch (_: UsageAccessMissingException) {
-            return WidgetData.NoAccess(settings, path, version)
+            return WidgetData.NoAccess(settings, path, version, imagePalette)
         }
         val comparison = runCatching {
             val zone = time.zone()
@@ -105,6 +112,7 @@ class WidgetDataSource @Inject constructor(
             settings = settings,
             backgroundPath = path,
             backgroundVersion = version,
+            imagePalette = imagePalette,
         )
     }
 

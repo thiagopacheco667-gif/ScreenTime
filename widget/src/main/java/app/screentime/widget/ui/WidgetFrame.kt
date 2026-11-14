@@ -21,6 +21,8 @@ import androidx.glance.layout.ContentScale
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
+import app.screentime.domain.color.WidgetImageColors
+import app.screentime.domain.model.WidgetColorSource
 import app.screentime.domain.model.WidgetKind
 import app.screentime.domain.model.WidgetStyle
 import app.screentime.widget.R
@@ -47,8 +49,12 @@ internal fun WidgetFrame(
     val size = LocalSize.current
     val settings = data.settings
     val style = settings.styleFor(kind)
-    val palette = paletteFor(style, settings.accent)
     val path = data.backgroundPath
+    // Cores da imagem: degradê e destaques tirados da foto, com contraste garantido.
+    val imageColors = data.imagePalette
+        ?.takeIf { style == WidgetStyle.Image && settings.widgetImage.colors == WidgetColorSource.Image }
+        ?.let { WidgetImageColors.from(it, settings.widgetImage.dimPercent) }
+    val palette = imageColors?.let { paletteFromImage(it) } ?: paletteFor(style, settings.accent)
     val image = if (style == WidgetStyle.Image && path != null) {
         BackgroundRenderer.render(
             context = context,
@@ -60,6 +66,7 @@ internal fun WidgetFrame(
             dimPercent = settings.widgetImage.dimPercent,
             blurDp = settings.widgetImage.blurPx,
             cornerDp = corner.value,
+            overlay = imageColors?.let { Triple(it.overlayStart, it.overlayEnd, it.overlayAlpha) },
         )
     } else {
         null

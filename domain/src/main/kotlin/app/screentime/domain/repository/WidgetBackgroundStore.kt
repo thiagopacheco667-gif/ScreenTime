@@ -19,4 +19,7 @@ interface WidgetBackgroundStore {
 
     /** Muda a cada imagem nova (para recarregar prévias). */
     fun version(): Long
+
+    /** Cores principais da imagem salva (calculadas uma vez e guardadas), ou nulo sem imagem. */
+    suspend fun palette(): app.screentime.domain.color.ImagePalette?
 }

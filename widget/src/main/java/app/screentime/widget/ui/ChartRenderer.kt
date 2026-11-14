@@ -4,6 +4,8 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.DashPathEffect
+import android.graphics.LinearGradient
+import android.graphics.Shader
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
@@ -78,12 +80,20 @@ internal object ChartRenderer {
         val barW = (slot - gap).coerceAtLeast(1f)
         val radius = (barW / 2f).coerceAtMost(dp(2.5f))
         val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+        val gradient = palette.barTop?.let {
+            LinearGradient(0f, top, 0f, bottom, it, palette.bar, Shader.TileMode.CLAMP)
+        }
         for (hour in 0..currentHour.coerceIn(0, 23)) {
             val v = today.getOrElse(hour) { 0L }
             if (v <= 0L) continue
             val barTop = minOf(y(v), bottom - dp(2f))
             val x = left + hour * slot + gap / 2f
-            paint.color = if (hour == currentHour) palette.barNow else palette.bar
+            if (hour == currentHour || gradient == null) {
+                paint.shader = null
+                paint.color = if (hour == currentHour) palette.barNow else palette.bar
+            } else {
+                paint.shader = gradient
+            }
             val path = Path().apply {
                 addRoundRect(
                     RectF(x, barTop, x + barW, bottom),

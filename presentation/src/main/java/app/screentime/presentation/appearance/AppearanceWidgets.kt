@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
@@ -52,7 +53,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import app.screentime.domain.color.WidgetImageColors
 import app.screentime.domain.model.AppearanceSettings
+import app.screentime.domain.model.WidgetColorSource
 import app.screentime.domain.model.ImageFocus
 import app.screentime.domain.model.WidgetImageTarget
 import app.screentime.domain.model.WidgetStyle
@@ -255,6 +258,30 @@ private fun ImagePanel(
             }
         }
 
+        Labeled(stringResource(R.string.appearance_image_colors)) {
+            Chips(
+                options = listOf(
+                    WidgetColorSource.Image to stringResource(R.string.appearance_colors_image),
+                    WidgetColorSource.Theme to stringResource(R.string.appearance_colors_theme),
+                ),
+                selected = s.widgetImage.colors,
+                onSelect = viewModel::setImageColors,
+            )
+            val p = image.palette
+            if (p != null && s.widgetImage.colors == WidgetColorSource.Image) {
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                    listOf(p.dark, p.mid, p.vivid, p.light).forEach { argb ->
+                        Box(Modifier.size(22.dp).clip(CircleShape).background(Color(argb)).border(1.dp, Color(0x33FFFFFF), CircleShape))
+                    }
+                    Text(
+                        stringResource(R.string.appearance_colors_found),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+        }
+
         Labeled(stringResource(R.string.appearance_image_focus)) {
             Chips(
                 options = listOf(
@@ -306,6 +333,12 @@ private fun ImagePanel(
 /** Prévia: a mesma foto, com o escurecimento e o desfoque escolhidos. */
 @Composable
 private fun ImagePreview(image: BackgroundImage, s: AppearanceSettings) {
+    val imageColors = image.palette
+        ?.takeIf { s.widgetImage.colors == WidgetColorSource.Image }
+        ?.let { WidgetImageColors.from(it, s.widgetImage.dimPercent) }
+    val accent = imageColors?.let { Color(it.accent) } ?: MaterialTheme.colorScheme.primary
+    val barBrush = imageColors?.let { Brush.verticalGradient(listOf(Color(it.barTop), Color(it.barBottom))) }
+        ?: Brush.verticalGradient(listOf(Color.White.copy(alpha = 0.85f), Color.White.copy(alpha = 0.85f)))
     val bitmap by produceState<ImageBitmap?>(initialValue = null, image.path, image.version) {
         val path = image.path
         value = if (path == null) {
@@ -340,10 +373,26 @@ private fun ImagePreview(image: BackgroundImage, s: AppearanceSettings) {
                 // O desfoque da prévia existe a partir do Android 12; o widget é desfocado em qualquer versão.
                 modifier = Modifier.fillMaxSize().blur(s.widgetImage.blurPx.dp),
             )
-            Box(Modifier.fillMaxSize().background(Color(0xFF080A14).copy(alpha = s.widgetImage.dimPercent / 100f)))
+            val colors = image.palette
+                ?.takeIf { s.widgetImage.colors == WidgetColorSource.Image }
+                ?.let { WidgetImageColors.from(it, s.widgetImage.dimPercent) }
+            if (colors != null) {
+                Box(
+                    Modifier.fillMaxSize().background(
+                        Brush.linearGradient(
+                            listOf(
+                                Color(colors.overlayStart).copy(alpha = colors.overlayAlpha),
+                                Color(colors.overlayEnd).copy(alpha = colors.overlayAlpha),
+                            ),
+                        ),
+                    ),
+                )
+            } else {
+                Box(Modifier.fillMaxSize().background(Color(0xFF080A14).copy(alpha = s.widgetImage.dimPercent / 100f)))
+            }
         }
         Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(stringResource(R.string.appearance_preview_today), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
+            Text(stringResource(R.string.appearance_preview_today), style = MaterialTheme.typography.labelSmall, color = accent)
             Text(
                 if (current == null) stringResource(R.string.appearance_image_none) else "1 h 23 min",
                 style = MaterialTheme.typography.headlineSmall,
@@ -352,7 +401,7 @@ private fun ImagePreview(image: BackgroundImage, s: AppearanceSettings) {
             if (current != null) {
                 Row(Modifier.fillMaxWidth().height(28.dp), horizontalArrangement = Arrangement.spacedBy(3.dp), verticalAlignment = Alignment.Bottom) {
                     listOf(0.95f, 0.85f, 0.25f, 0.1f, 0.55f, 0.7f, 0.75f, 0.5f, 0.2f, 0.1f, 0.05f, 0.3f).forEach { h ->
-                        Box(Modifier.weight(1f).fillMaxHeight(h).clip(RoundedCornerShape(topStart = 2.dp, topEnd = 2.dp)).background(Color.White.copy(alpha = 0.85f)))
+                        Box(Modifier.weight(1f).fillMaxHeight(h).clip(RoundedCornerShape(topStart = 2.dp, topEnd = 2.dp)).background(barBrush))
                     }
                 }
             }

@@ -36,6 +36,10 @@ internal class WidgetPalette(
     val barNow: Int,
     val grid: Int,
     val label: Int,
+    /** Topo do degradê das barras (nulo = cor única). */
+    val barTop: Int? = null,
+    /** Fundo do selo de comparação; nulo = verde/coral do estilo. */
+    pill: Color? = null,
 ) {
     val text: GlanceColor = fixed(text)
     val muted: GlanceColor = fixed(muted)
@@ -45,8 +49,8 @@ internal class WidgetPalette(
     val better: GlanceColor = fixed(better)
     val worse: GlanceColor = fixed(worse)
     val tile: GlanceColor = fixed(Color(0x1FFFFFFF))
-    val betterBg: GlanceColor = fixed(better.copy(alpha = 0.30f))
-    val worseBg: GlanceColor = fixed(worse.copy(alpha = 0.30f))
+    val betterBg: GlanceColor = fixed(pill ?: better.copy(alpha = 0.30f))
+    val worseBg: GlanceColor = fixed(pill ?: worse.copy(alpha = 0.30f))
 
     fun style(size: TextUnit, weight: FontWeight = FontWeight.Normal, color: GlanceColor = text) =
         TextStyle(color = color, fontSize = size, fontWeight = weight)
@@ -95,6 +99,18 @@ internal fun paletteFor(style: WidgetStyle, accent: AccentColor): WidgetPalette 
         grid = Color(0x33FFFFFF).toArgb(), label = Color(0xFFE2E4F2).toArgb(),
     )
 }
+
+/** Paleta com as cores tiradas da imagem de fundo (contraste já verificado no domínio). */
+internal fun paletteFromImage(c: app.screentime.domain.color.WidgetImageColors): WidgetPalette = WidgetPalette(
+    background = null,
+    text = Color(c.text), muted = Color(c.muted), accent = Color(c.accent),
+    track = Color(0x40FFFFFF), divider = Color(0x33FFFFFF),
+    better = Color(c.text), worse = Color(c.text),
+    bar = c.barBottom, barNow = c.barNow,
+    grid = Color(0x33FFFFFF).toArgb(), label = c.muted,
+    barTop = c.barTop,
+    pill = Color(c.pillBackground),
+)
 
 /** Mesmo formato do app: 45 s · 12 min · 2 h · 2 h 05 min */
 internal fun formatDuration(millis: Long): String {

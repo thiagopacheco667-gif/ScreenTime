@@ -20,6 +20,15 @@ enum class WidgetImageTarget { All, Square, Expanded, Compact }
 /** Parte da imagem que fica visível quando ela é cortada para o formato do widget. */
 enum class ImageFocus { Top, Center, Bottom }
 
+/** De onde vêm as cores do widget com fundo de imagem. */
+enum class WidgetColorSource {
+    /** Degradê e destaques tirados da própria foto. */
+    Image,
+
+    /** Cor de destaque escolhida em Aparência (ex.: dourado). */
+    Theme,
+}
+
 /** Os três widgets, para decidir onde a imagem de fundo vale. */
 enum class WidgetKind { Square, Expanded, Compact }
 
@@ -35,6 +44,7 @@ data class WidgetImageSettings(
     val blurPx: Int = 6,
     val target: WidgetImageTarget = WidgetImageTarget.All,
     val focus: ImageFocus = ImageFocus.Center,
+    val colors: WidgetColorSource = WidgetColorSource.Image,
 )
 
 /** Escolhas de aparência feitas em Ajustes › Aparência. */

@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory
 import android.graphics.BitmapShader
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.LinearGradient
 import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.RectF
@@ -36,6 +37,8 @@ internal object BackgroundRenderer {
         dimPercent: Int,
         blurDp: Int,
         cornerDp: Float,
+        /** Degradê das cores da imagem (início, fim, opacidade); nulo = escurecimento simples. */
+        overlay: Triple<Int, Int, Float>? = null,
     ): Bitmap? {
         val density = context.resources.displayMetrics.density
         var w = (widthDp * density).roundToInt().coerceAtLeast(1)
@@ -45,7 +48,7 @@ internal object BackgroundRenderer {
         w = (w * pxScale).roundToInt().coerceAtLeast(1)
         h = (h * pxScale).roundToInt().coerceAtLeast(1)
 
-        val key = "$path|$version|$w|$h|$focus|$dimPercent|$blurDp|$cornerDp"
+        val key = "$path|$version|$w|$h|$focus|$dimPercent|$blurDp|$cornerDp|$overlay"
         cache.get(key)?.let { return it }
 
         val source = decode(path, w, h) ?: return null
@@ -97,8 +100,24 @@ internal object BackgroundRenderer {
                 shader = BitmapShader(current, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP)
             },
         )
-        val alpha = (dimPercent.coerceIn(0, 100) * 2.55f).roundToInt()
-        canvas.drawRoundRect(rect, r, r, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.argb(alpha, 8, 10, 20) })
+        if (overlay != null) {
+            val (start, end, a) = overlay
+            val alphaInt = (a.coerceIn(0f, 1f) * 255).roundToInt()
+            canvas.drawRoundRect(
+                rect, r, r,
+                Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                    shader = LinearGradient(
+                        0f, 0f, w.toFloat(), h.toFloat(),
+                        Color.argb(alphaInt, Color.red(start), Color.green(start), Color.blue(start)),
+                        Color.argb(alphaInt, Color.red(end), Color.green(end), Color.blue(end)),
+                        Shader.TileMode.CLAMP,
+                    )
+                },
+            )
+        } else {
+            val alpha = (dimPercent.coerceIn(0, 100) * 2.55f).roundToInt()
+            canvas.drawRoundRect(rect, r, r, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.argb(alpha, 8, 10, 20) })
+        }
         if (current !== cropped) current.recycle()
         cropped.recycle()
         cache.put(key, out)

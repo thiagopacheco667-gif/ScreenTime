@@ -278,4 +278,8 @@
     <string name="appearance_target_square">Quadrado</string>
     <string name="appearance_target_expanded">Expandido</string>
     <string name="appearance_target_compact">Compacto</string>
+    <string name="appearance_image_colors">Cores do widget</string>
+    <string name="appearance_colors_image">Da imagem</string>
+    <string name="appearance_colors_theme">Do tema</string>
+    <string name="appearance_colors_found">cores encontradas na foto</string>
 </resources>

@@ -3,11 +3,13 @@ package app.screentime.presentation.appearance
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.screentime.domain.color.ImagePalette
 import app.screentime.domain.model.AccentColor
 import app.screentime.domain.model.AppearanceSettings
 import app.screentime.domain.model.FontChoice
 import app.screentime.domain.model.ImageFocus
 import app.screentime.domain.model.ThemeMode
+import app.screentime.domain.model.WidgetColorSource
 import app.screentime.domain.model.WidgetImageTarget
 import app.screentime.domain.model.WidgetStyle
 import app.screentime.domain.repository.SettingsRepository
@@ -23,8 +25,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-/** Imagem de fundo salva: caminho e versão (muda a cada imagem nova). */
-data class BackgroundImage(val path: String?, val version: Long)
+/** Imagem de fundo salva: caminho, versão (muda a cada imagem nova) e cores extraídas. */
+data class BackgroundImage(val path: String?, val version: Long, val palette: ImagePalette? = null)
 
 @HiltViewModel
 class AppearanceViewModel @Inject constructor(
@@ -38,6 +40,14 @@ class AppearanceViewModel @Inject constructor(
 
     private val _image = MutableStateFlow(BackgroundImage(backgroundStore.imagePath(), backgroundStore.version()))
     val image: StateFlow<BackgroundImage> = _image.asStateFlow()
+
+    init {
+        viewModelScope.launch { reloadImage() }
+    }
+
+    private suspend fun reloadImage() {
+        _image.value = BackgroundImage(backgroundStore.imagePath(), backgroundStore.version(), backgroundStore.palette())
+    }
 
     /** true enquanto a foto escolhida é copiada; erro se a cópia falhar. */
     private val _imageBusy = MutableStateFlow(false)
@@ -56,6 +66,7 @@ class AppearanceViewModel @Inject constructor(
     fun setWidgetAppCount(count: Int) = update(widgets = true) { it.copy(widgetAppCount = count) }
     fun setWidgetComparison(show: Boolean) = update(widgets = true) { it.copy(widgetShowComparison = show) }
     fun setImageTarget(target: WidgetImageTarget) = update(widgets = true) { it.copy(widgetImage = it.widgetImage.copy(target = target)) }
+    fun setImageColors(source: WidgetColorSource) = update(widgets = true) { it.copy(widgetImage = it.widgetImage.copy(colors = source)) }
     fun setImageFocus(focus: ImageFocus) = update(widgets = true) { it.copy(widgetImage = it.widgetImage.copy(focus = focus)) }
 
     /** Sliders: salva durante o arraste; os widgets são redesenhados ao soltar ([refreshWidgets]). */
@@ -73,7 +84,7 @@ class AppearanceViewModel @Inject constructor(
             val ok = backgroundStore.saveFrom(uri.toString())
             _imageBusy.value = false
             if (ok) {
-                _image.value = BackgroundImage(backgroundStore.imagePath(), backgroundStore.version())
+                reloadImage()
                 repository.update { it.copy(widgetStyle = WidgetStyle.Image, widgetImage = it.widgetImage.copy(hasImage = true)) }
                 widgetUpdater.updateAll()
             } else {

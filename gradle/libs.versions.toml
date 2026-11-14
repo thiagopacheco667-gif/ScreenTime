@@ -16,6 +16,7 @@ coroutines = "1.10.2"
 serialization = "1.9.0"
 javaxInject = "1"
 junit = "4.13.2"
+palette = "1.0.0"
 
 [libraries]
 # AndroidX base
@@ -61,6 +62,9 @@ kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-cor
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
+
+# Cores de imagem
+androidx-palette-ktx = { group = "androidx.palette", name = "palette-ktx", version.ref = "palette" }
 
 # Testes
 junit = { group = "junit", name = "junit", version.ref = "junit" }
