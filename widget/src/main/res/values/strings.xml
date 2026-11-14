@@ -3,10 +3,18 @@
     <string name="widget_compact_name">ScreenTime compacto</string>
     <string name="widget_compact_description">Tempo de uso de hoje e o app mais usado</string>
     <string name="widget_expanded_name">ScreenTime expandido</string>
-    <string name="widget_expanded_description">Tempo de hoje e os três apps mais usados</string>
+    <string name="widget_expanded_description">Tempo de tela de hoje, gráfico por hora e os 4 apps mais usados</string>
     <string name="widget_today">HOJE</string>
     <string name="widget_updated_at">Atualizado às %1$s</string>
     <string name="widget_no_usage">Nenhum uso hoje ainda</string>
     <string name="widget_no_access_title">Acesso ao uso desligado</string>
     <string name="widget_no_access_body">Toque para abrir o ScreenTime e permitir</string>
+    <string name="widget_header">TEMPO DE TELA</string>
+    <string name="widget_open_settings">Abrir ajustes do ScreenTime</string>
+    <string name="widget_total_today">TEMPO TOTAL (HOJE)</string>
+    <string name="widget_top_apps">APPS MAIS USADOS</string>
+    <string name="widget_chart_description">Uso por hora hoje, comparado com ontem</string>
+    <string name="widget_legend">▮ hoje   ⁓ ontem</string>
+    <string name="widget_legend_today_only">▮ uso por hora</string>
+    <string name="widget_updated_short">às %1$s</string>
 </resources>

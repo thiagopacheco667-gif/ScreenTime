@@ -10,6 +10,7 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -71,8 +72,16 @@ private val topLevels = listOf(
 fun AppNavHost(
     onOpenUsageSettings: () -> Unit,
     onPermissionLost: () -> Unit,
+    openSettingsRequest: Int = 0,
 ) {
     val navController = rememberNavController()
+
+    // Engrenagem do widget: abre os Ajustes por cima do painel.
+    LaunchedEffect(openSettingsRequest) {
+        if (openSettingsRequest > 0) {
+            navController.navigate(SettingsDestination) { launchSingleTop = true }
+        }
+    }
     val entry by navController.currentBackStackEntryAsState()
     val destination = entry?.destination
     val showBar = topLevels.any { destination?.hasRoute(it.type) == true }

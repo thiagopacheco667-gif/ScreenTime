@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import androidx.core.graphics.drawable.toBitmap
+import app.screentime.domain.model.DataStatus
 import app.screentime.domain.repository.TimeSource
 import app.screentime.domain.repository.UsageAccessChecker
 import app.screentime.domain.repository.UsageAccessMissingException
@@ -21,12 +22,20 @@ sealed interface WidgetData {
     /** Sem acesso ao uso: o widget pede para abrir o app. */
     data object NoAccess : WidgetData
 
+    /**
+     * @param hourlyToday uso por hora de hoje (24 posições).
+     * @param hourlyYesterday uso por hora de ontem, ou nulo se não houver dados.
+     */
     data class Ready(
         val totalMillis: Long,
         val top: List<WidgetApp>,
         val updatedAt: Instant,
         val zone: ZoneId,
-    ) : WidgetData
+        val hourlyToday: List<Long>,
+        val hourlyYesterday: List<Long>?,
+    ) : WidgetData {
+        val currentHour: Int get() = updatedAt.atZone(zone).hour
+    }
 }
 
 data class WidgetApp(
@@ -62,7 +71,16 @@ class WidgetDataSource @Inject constructor(
             },
             updatedAt = day.computedAt,
             zone = day.zoneId,
+            hourlyToday = day.hourlyMillis,
+            hourlyYesterday = yesterdayHourly(today.minusDays(1)),
         )
+    }
+
+    private suspend fun yesterdayHourly(date: java.time.LocalDate): List<Long>? = try {
+        val day = repository.cachedDayUsage(date) ?: repository.dayUsage(date)
+        day.hourlyMillis.takeIf { day.status == DataStatus.Available }
+    } catch (_: UsageAccessMissingException) {
+        null
     }
 
     private fun icon(packageName: String): Bitmap? = try {

@@ -58,3 +58,32 @@ internal suspend fun loadWidgetData(context: Context, topCount: Int): WidgetData
 internal fun launchIntent(context: Context): Intent =
     (context.packageManager.getLaunchIntentForPackage(context.packageName) ?: Intent())
         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+
+/**
+ * Abre o app direto nos Ajustes. O endereço (data) diferente faz o Android tratar
+ * este atalho como distinto do toque no resto do widget.
+ */
+internal fun settingsIntent(context: Context): Intent =
+    launchIntent(context).setData(android.net.Uri.parse("screentime://settings"))
+
+/** Paleta fixa escura do widget expandido (azul-marinho com dourado). */
+internal object NavyColors {
+    private fun fixed(c: Color) = ColorProvider(day = c, night = c)
+    val text = fixed(Color(0xFFF2F4FF))
+    val muted = fixed(Color(0xFFA9B0D6))
+    val gold = fixed(Color(0xFFE3C896))
+    val divider = fixed(Color(0x26FFFFFF))
+    val track = fixed(Color(0x2EFFFFFF))
+    val tile = fixed(Color(0x1FFFFFFF))
+}
+
+internal object NavyText {
+    val header = TextStyle(color = NavyColors.muted, fontSize = 13.sp, fontWeight = FontWeight.Medium)
+    val total = TextStyle(color = NavyColors.text, fontSize = 34.sp, fontWeight = FontWeight.Normal)
+    val goldLabel = TextStyle(color = NavyColors.gold, fontSize = 11.sp, fontWeight = FontWeight.Medium)
+    val appName = TextStyle(color = NavyColors.text, fontSize = 12.sp, fontWeight = FontWeight.Medium)
+    val appTime = TextStyle(color = NavyColors.text, fontSize = 12.sp)
+    val small = TextStyle(color = NavyColors.muted, fontSize = 10.sp)
+    val body = TextStyle(color = NavyColors.text, fontSize = 13.sp, fontWeight = FontWeight.Medium)
+    val bodyMuted = TextStyle(color = NavyColors.muted, fontSize = 12.sp)
+}

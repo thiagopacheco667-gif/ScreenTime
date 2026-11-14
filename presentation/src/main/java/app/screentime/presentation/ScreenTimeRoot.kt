@@ -25,6 +25,7 @@ import app.screentime.presentation.permission.PermissionViewModel
  */
 @Composable
 fun ScreenTimeRoot(
+    openSettingsRequest: Int = 0,
     permissionViewModel: PermissionViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
@@ -42,6 +43,7 @@ fun ScreenTimeRoot(
     ) {
         if (hasAccess) {
             AppNavHost(
+                openSettingsRequest = openSettingsRequest,
                 onOpenUsageSettings = { UsageAccessSettings.open(context) },
                 onPermissionLost = permissionViewModel::refresh,
             )

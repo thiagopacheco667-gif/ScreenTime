@@ -4,7 +4,12 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -42,6 +47,9 @@ fun DailyBarChart(
     val labelStyle = MaterialTheme.typography.labelSmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
     val highlightLabelStyle = MaterialTheme.typography.labelSmall.copy(color = MaterialTheme.colorScheme.onSurface)
     val measurer = rememberTextMeasurer()
+    // Barras crescem ao abrir a tela (uma vez; atualizações seguintes não repetem a animação).
+    val grow = remember { Animatable(0f) }
+    LaunchedEffect(Unit) { grow.animateTo(1f, tween(durationMillis = 700, easing = FastOutSlowInEasing)) }
     val max = (values.filterNotNull().maxOrNull() ?: 0L).coerceAtLeast(averageMillis ?: 0L).coerceAtLeast(1L)
 
     Canvas(
@@ -74,7 +82,7 @@ fun DailyBarChart(
                     cornerRadius = CornerRadius(stub / 2f, stub / 2f),
                 )
                 else -> {
-                    val h = (value.toFloat() / max * chartHeight).coerceAtLeast(stub * 2)
+                    val h = (value.toFloat() / max * chartHeight * grow.value).coerceAtLeast(stub * 2)
                     drawRoundRect(
                         color = if (i == highlightIndex) accent else soft,
                         topLeft = Offset(x, chartHeight - h),
