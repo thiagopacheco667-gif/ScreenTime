@@ -4,11 +4,15 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import androidx.core.graphics.drawable.toBitmap
-import app.screentime.domain.model.DataStatus
+import app.screentime.domain.model.AppearanceSettings
+import app.screentime.domain.model.Comparison
+import app.screentime.domain.repository.SettingsRepository
 import app.screentime.domain.repository.TimeSource
 import app.screentime.domain.repository.UsageAccessChecker
 import app.screentime.domain.repository.UsageAccessMissingException
 import app.screentime.domain.repository.UsageRepository
+import app.screentime.domain.repository.WidgetBackgroundStore
+import app.screentime.domain.usecase.SyncUsageUseCase
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -19,12 +23,20 @@ import javax.inject.Inject
 
 /** O que os widgets mostram. */
 sealed interface WidgetData {
+    val settings: AppearanceSettings
+    val backgroundPath: String?
+    val backgroundVersion: Long
+
     /** Sem acesso ao uso: o widget pede para abrir o app. */
-    data object NoAccess : WidgetData
+    data class NoAccess(
+        override val settings: AppearanceSettings,
+        override val backgroundPath: String?,
+        override val backgroundVersion: Long,
+    ) : WidgetData
 
     /**
-     * @param hourlyToday uso por hora de hoje (24 posições).
-     * @param hourlyYesterday uso por hora de ontem, ou nulo se não houver dados.
+     * @param hourlyToday tempo de tela por hora de hoje (24 posições, em ms).
+     * @param comparisonPercent variação contra ontem até o mesmo horário; nulo se não houver base.
      */
     data class Ready(
         val totalMillis: Long,
@@ -32,7 +44,10 @@ sealed interface WidgetData {
         val updatedAt: Instant,
         val zone: ZoneId,
         val hourlyToday: List<Long>,
-        val hourlyYesterday: List<Long>?,
+        val comparisonPercent: Int?,
+        override val settings: AppearanceSettings,
+        override val backgroundPath: String?,
+        override val backgroundVersion: Long,
     ) : WidgetData {
         val currentHour: Int get() = updatedAt.atZone(zone).hour
     }
@@ -46,24 +61,38 @@ data class WidgetApp(
 )
 
 /**
- * Lê o dia de hoje para os widgets.
- * Usa o resumo salvo pelo worker (rápido). Se ainda não houver resumo de hoje
- * (widget recém-adicionado ou dia que acabou de virar), calcula uma vez e salva.
+ * Lê o dia de hoje para os widgets. Usa o resumo salvo pelo worker (rápido);
+ * sem resumo de hoje (widget recém-adicionado ou dia que virou), calcula e salva.
  */
 class WidgetDataSource @Inject constructor(
     @ApplicationContext private val context: Context,
     private val repository: UsageRepository,
     private val accessChecker: UsageAccessChecker,
     private val time: TimeSource,
+    private val settingsRepository: SettingsRepository,
+    private val backgroundStore: WidgetBackgroundStore,
 ) {
-    suspend fun load(topCount: Int): WidgetData {
-        if (!accessChecker.hasUsageAccess()) return WidgetData.NoAccess
+    suspend fun load(topCount: Int = AppearanceSettings.MAX_WIDGET_APPS): WidgetData {
+        val settings = settingsRepository.current()
+        val path = backgroundStore.imagePath()
+        val version = backgroundStore.version()
+        if (!accessChecker.hasUsageAccess()) return WidgetData.NoAccess(settings, path, version)
+
         val today = time.today()
         val day = try {
             repository.cachedDayUsage(today) ?: repository.dayUsage(today)
         } catch (_: UsageAccessMissingException) {
-            return WidgetData.NoAccess
+            return WidgetData.NoAccess(settings, path, version)
         }
+        val comparison = runCatching {
+            val zone = time.zone()
+            val sameTime = today.minusDays(1)
+                .atTime(day.computedAt.atZone(zone).toLocalTime())
+                .atZone(zone)
+                .toInstant()
+            Comparison.of(day, repository.dayUsage(today.minusDays(1), upTo = sameTime))
+        }.getOrNull()
+
         return WidgetData.Ready(
             totalMillis = day.totalMillis,
             top = day.apps.take(topCount).map {
@@ -72,15 +101,11 @@ class WidgetDataSource @Inject constructor(
             updatedAt = day.computedAt,
             zone = day.zoneId,
             hourlyToday = day.hourlyMillis,
-            hourlyYesterday = yesterdayHourly(today.minusDays(1)),
+            comparisonPercent = (comparison as? Comparison.Percent)?.value,
+            settings = settings,
+            backgroundPath = path,
+            backgroundVersion = version,
         )
-    }
-
-    private suspend fun yesterdayHourly(date: java.time.LocalDate): List<Long>? = try {
-        val day = repository.cachedDayUsage(date) ?: repository.dayUsage(date)
-        day.hourlyMillis.takeIf { day.status == DataStatus.Available }
-    } catch (_: UsageAccessMissingException) {
-        null
     }
 
     private fun icon(packageName: String): Bitmap? = try {
@@ -100,4 +125,5 @@ class WidgetDataSource @Inject constructor(
 @InstallIn(SingletonComponent::class)
 interface WidgetEntryPoint {
     fun widgetDataSource(): WidgetDataSource
+    fun syncUsage(): SyncUsageUseCase
 }

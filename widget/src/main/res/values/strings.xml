@@ -13,10 +13,13 @@
     <string name="widget_open_settings">Abrir ajustes do ScreenTime</string>
     <string name="widget_total_today">TEMPO TOTAL (HOJE)</string>
     <string name="widget_top_apps">APPS MAIS USADOS</string>
-    <string name="widget_chart_description">Uso por hora hoje, comparado com ontem</string>
+    <string name="widget_chart_description">Minutos de tela em cada hora de hoje</string>
     <string name="widget_legend">▮ hoje   ⁓ ontem</string>
     <string name="widget_legend_today_only">▮ uso por hora</string>
-    <string name="widget_updated_short">às %1$s</string>
+    <string name="widget_updated_short">atualizado %1$s</string>
     <string name="widget_square_name">ScreenTime quadrado</string>
     <string name="widget_square_description">Tempo de hoje, gráfico por hora e os apps mais usados em 2×2</string>
+    <string name="widget_refresh">Atualizar agora</string>
+    <string name="widget_header_today">TEMPO DE TELA HOJE</string>
+    <string name="widget_most_used">Mais usado:</string>
 </resources>

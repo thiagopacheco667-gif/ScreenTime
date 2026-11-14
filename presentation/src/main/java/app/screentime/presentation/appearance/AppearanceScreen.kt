@@ -159,11 +159,7 @@ fun AppearanceRoute(
             }
         }
 
-        Text(
-            text = stringResource(R.string.appearance_widgets_soon),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+        WidgetsSection(viewModel, s)
     }
 }
 

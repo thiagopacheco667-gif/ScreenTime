@@ -60,6 +60,7 @@ class SettingsRepositoryImpl @Inject constructor(
                 dimPercent = prefs.getInt(K_IMG_DIM, d.widgetImage.dimPercent),
                 blurPx = prefs.getInt(K_IMG_BLUR, d.widgetImage.blurPx),
                 target = enumOr(prefs.getString(K_IMG_TARGET, null), d.widgetImage.target),
+                focus = enumOr(prefs.getString(K_IMG_FOCUS, null), d.widgetImage.focus),
             ),
         ).normalized()
     }
@@ -77,6 +78,7 @@ class SettingsRepositoryImpl @Inject constructor(
             .putInt(K_IMG_DIM, s.widgetImage.dimPercent)
             .putInt(K_IMG_BLUR, s.widgetImage.blurPx)
             .putString(K_IMG_TARGET, s.widgetImage.target.name)
+            .putString(K_IMG_FOCUS, s.widgetImage.focus.name)
             .apply()
     }
 
@@ -95,6 +97,7 @@ class SettingsRepositoryImpl @Inject constructor(
         const val K_IMG_DIM = "widget_image_dim"
         const val K_IMG_BLUR = "widget_image_blur"
         const val K_IMG_TARGET = "widget_image_target"
+        const val K_IMG_FOCUS = "widget_image_focus"
     }
 }
 

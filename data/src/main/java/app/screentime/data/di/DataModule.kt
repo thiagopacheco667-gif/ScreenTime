@@ -2,11 +2,13 @@ package app.screentime.data.di
 
 import app.screentime.data.repository.UsageRepositoryImpl
 import app.screentime.data.settings.SettingsRepositoryImpl
+import app.screentime.data.widget.WidgetBackgroundStoreImpl
 import app.screentime.data.time.SystemTimeSource
 import app.screentime.domain.engine.UsageCalculator
 import app.screentime.domain.repository.SettingsRepository
 import app.screentime.domain.repository.TimeSource
 import app.screentime.domain.repository.UsageAccessChecker
+import app.screentime.domain.repository.WidgetBackgroundStore
 import app.screentime.domain.repository.WidgetUpdater
 import app.screentime.domain.repository.UsageRepository
 import app.screentime.domain.usecase.ClearHistoryUseCase
@@ -36,6 +38,9 @@ abstract class DataBindings {
 
     @Binds
     abstract fun bindSettingsRepository(impl: SettingsRepositoryImpl): SettingsRepository
+
+    @Binds
+    abstract fun bindWidgetBackgroundStore(impl: WidgetBackgroundStoreImpl): WidgetBackgroundStore
 }
 
 /**

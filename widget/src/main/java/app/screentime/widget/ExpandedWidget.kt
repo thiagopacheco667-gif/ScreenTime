@@ -6,6 +6,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.glance.ColorFilter
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.Image
@@ -18,8 +20,6 @@ import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.LinearProgressIndicator
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.action.actionStartActivity
-import androidx.glance.appwidget.appWidgetBackground
-import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.layout.Alignment
@@ -35,45 +35,39 @@ import androidx.glance.layout.height
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.layout.width
+import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
+import app.screentime.domain.model.WidgetKind
 import app.screentime.widget.data.WidgetApp
 import app.screentime.widget.data.WidgetData
+import app.screentime.widget.ui.AppIconTile
 import app.screentime.widget.ui.ChartRenderer
-import app.screentime.widget.ui.NavyColors
-import app.screentime.widget.ui.NavyText
+import app.screentime.widget.ui.RefreshButton
+import app.screentime.widget.ui.WidgetFrame
+import app.screentime.widget.ui.WidgetPalette
+import app.screentime.widget.ui.comparisonText
 import app.screentime.widget.ui.formatClock
 import app.screentime.widget.ui.formatDuration
+import app.screentime.widget.ui.formatShort
 import app.screentime.widget.ui.launchIntent
 import app.screentime.widget.ui.loadWidgetData
 import app.screentime.widget.ui.settingsIntent
 
 /**
- * Widget expandido (4×2), visual azul-marinho:
- * - esquerda: tempo de tela de hoje e gráfico (barras = cada hora de hoje, curva = ontem);
- * - direita: os 4 apps mais usados com ícone, tempo e barra;
- * - engrenagem: abre os Ajustes do app.
- * Em alturas menores, o gráfico some e a lista mostra menos apps, para nada ficar cortado.
+ * Widget expandido (4×2): cabeçalho com horário, ↻ e ⚙; à esquerda o total,
+ * a comparação e o gráfico com escala; à direita os apps mais usados (3 ou 4).
  */
 class ExpandedWidget : GlanceAppWidget() {
 
     override val sizeMode: SizeMode = SizeMode.Responsive(
-        setOf(
-            DpSize(250.dp, 110.dp),
-            DpSize(250.dp, 170.dp),
-            DpSize(300.dp, 190.dp),
-            DpSize(340.dp, 220.dp),
-        ),
+        setOf(DpSize(250.dp, 110.dp), DpSize(250.dp, 170.dp), DpSize(300.dp, 190.dp), DpSize(340.dp, 220.dp)),
     )
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
-        val data = loadWidgetData(context, topCount = MAX_APPS)
+        val data = loadWidgetData(context)
         val open = launchIntent(context)
         val settings = settingsIntent(context)
         provideContent { ExpandedContent(data, open, settings) }
-    }
-
-    companion object {
-        const val MAX_APPS = 4
     }
 }
 
@@ -81,168 +75,123 @@ class ExpandedWidgetReceiver : GlanceAppWidgetReceiver() {
     override val glanceAppWidget: GlanceAppWidget = ExpandedWidget()
 }
 
-private val HEADER_HEIGHT = 40.dp
-private val ROW_HEIGHT = 34.dp
+private val HEADER = 38.dp
+private val ROW = 32.dp
 
 @Composable
 private fun ExpandedContent(data: WidgetData, open: Intent, settings: Intent) {
     val context = LocalContext.current
     val size = LocalSize.current
-
-    Column(
-        modifier = GlanceModifier
-            .fillMaxSize()
-            .appWidgetBackground()
-            .background(ImageProvider(R.drawable.widget_dark_bg))
-            .cornerRadius(24.dp)
-            .clickable(actionStartActivity(open)),
-    ) {
-        // Cabeçalho
-        Row(
-            modifier = GlanceModifier.fillMaxWidth().height(HEADER_HEIGHT).padding(start = 16.dp, end = 6.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = context.getString(R.string.widget_header),
-                style = NavyText.header,
-                modifier = GlanceModifier.defaultWeight(),
-            )
-            Image(
-                provider = ImageProvider(R.drawable.ic_widget_settings),
-                contentDescription = context.getString(R.string.widget_open_settings),
-                modifier = GlanceModifier.size(36.dp).padding(8.dp).clickable(actionStartActivity(settings)),
-            )
-        }
-        Box(modifier = GlanceModifier.fillMaxWidth().height(1.dp).background(NavyColors.divider)) {}
-
-        when (data) {
-            WidgetData.NoAccess -> Column(modifier = GlanceModifier.fillMaxSize().padding(16.dp)) {
-                Text(context.getString(R.string.widget_no_access_title), style = NavyText.body)
-                Spacer(GlanceModifier.height(4.dp))
-                Text(context.getString(R.string.widget_no_access_body), style = NavyText.bodyMuted)
+    WidgetFrame(data, WidgetKind.Expanded, corner = 26.dp, open = open) { palette ->
+        Column(GlanceModifier.fillMaxSize()) {
+            Row(
+                GlanceModifier.fillMaxWidth().height(HEADER).padding(start = 16.dp, end = 6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Row(GlanceModifier.defaultWeight()) {
+                    Text(context.getString(R.string.widget_header), style = palette.style(11.sp, FontWeight.Bold, palette.muted), maxLines = 1)
+                    Text(" · ", style = palette.style(11.sp, FontWeight.Bold, palette.muted))
+                    Text(context.getString(R.string.widget_today), style = palette.style(11.sp, FontWeight.Bold, palette.accent), maxLines = 1)
+                }
+                if (data is WidgetData.Ready) {
+                    Text(
+                        context.getString(R.string.widget_updated_short, formatClock(data.updatedAt, data.zone)),
+                        style = palette.style(10.sp, color = palette.muted),
+                        maxLines = 1,
+                    )
+                }
+                RefreshButton(palette, 30.dp)
+                Image(
+                    provider = ImageProvider(R.drawable.ic_widget_settings),
+                    contentDescription = context.getString(R.string.widget_open_settings),
+                    colorFilter = ColorFilter.tint(palette.muted),
+                    modifier = GlanceModifier.size(30.dp).padding(6.dp).clickable(actionStartActivity(settings)),
+                )
             }
-            is WidgetData.Ready -> ReadyContent(data, width = size.width, height = size.height - HEADER_HEIGHT - 1.dp)
+            Box(GlanceModifier.fillMaxWidth().height(1.dp).background(palette.divider)) {}
+
+            when (data) {
+                is WidgetData.NoAccess -> Column(GlanceModifier.fillMaxSize().padding(16.dp)) {
+                    Text(context.getString(R.string.widget_no_access_title), style = palette.style(13.sp, FontWeight.Bold))
+                    Spacer(GlanceModifier.height(4.dp))
+                    Text(context.getString(R.string.widget_no_access_body), style = palette.style(12.sp, color = palette.muted))
+                }
+                is WidgetData.Ready -> Body(data, palette, size.width, size.height - HEADER - 1.dp)
+            }
         }
     }
 }
 
 @Composable
-private fun ReadyContent(data: WidgetData.Ready, width: Dp, height: Dp) {
+private fun Body(data: WidgetData.Ready, palette: WidgetPalette, width: Dp, height: Dp) {
     val context = LocalContext.current
     val rightWidth = width * 0.42f
     val leftWidth = width - rightWidth - 1.dp
+    val showCmp = data.settings.widgetShowComparison && data.comparisonPercent != null
 
-    // Altura que sobra para o gráfico depois do total, do rótulo e da legenda.
-    val chartWidth = leftWidth - 16.dp - 10.dp
-    val chartHeight = height - 8.dp - 42.dp - 16.dp - 6.dp - 16.dp - 10.dp
-    val showChart = chartHeight >= 44.dp
+    val chartWidth = leftWidth - 16.dp - 12.dp
+    val chartHeight = height - 10.dp - 38.dp - (if (showCmp) 16.dp else 0.dp) - 8.dp - 10.dp
+    val showChart = chartHeight >= 40.dp
+    val fit = ((height - 12.dp - 18.dp - 8.dp) / ROW).toInt().coerceIn(1, data.settings.widgetAppCount)
+    val apps = data.top.take(fit)
 
-    // Quantos apps cabem na coluna da direita.
-    val appsFit = ((height - 12.dp - 20.dp - 8.dp) / ROW_HEIGHT).toInt().coerceIn(1, ExpandedWidget.MAX_APPS)
-    val apps = data.top.take(appsFit)
-
-    Row(modifier = GlanceModifier.fillMaxSize()) {
-        // Coluna esquerda
-        Column(
-            modifier = GlanceModifier.width(leftWidth).fillMaxHeight()
-                .padding(start = 16.dp, end = 10.dp, top = 8.dp, bottom = 10.dp),
-        ) {
-            Text(formatDuration(data.totalMillis), style = NavyText.total, maxLines = 1)
-            Text(context.getString(R.string.widget_total_today), style = NavyText.goldLabel, maxLines = 1)
-            if (showChart) {
-                Spacer(GlanceModifier.height(6.dp))
-                val bitmap = ChartRenderer.render(
-                    context = context,
-                    widthDp = chartWidth.value,
-                    heightDp = chartHeight.value,
-                    today = data.hourlyToday,
-                    yesterday = data.hourlyYesterday,
-                    currentHour = data.currentHour,
+    Row(GlanceModifier.fillMaxSize()) {
+        Column(GlanceModifier.width(leftWidth).fillMaxHeight().padding(start = 16.dp, end = 12.dp, top = 10.dp, bottom = 10.dp)) {
+            Text(formatDuration(data.totalMillis), style = palette.style(32.sp, FontWeight.Medium), maxLines = 1)
+            val percent = data.comparisonPercent
+            if (showCmp && percent != null) {
+                Text(
+                    comparisonText(percent, long = true, time = formatClock(data.updatedAt, data.zone)),
+                    style = palette.style(11.sp, FontWeight.Bold, if (percent <= 0) palette.better else palette.worse),
+                    maxLines = 1,
                 )
+            }
+            if (showChart) {
+                Spacer(GlanceModifier.height(8.dp))
                 Image(
-                    provider = ImageProvider(bitmap),
+                    provider = ImageProvider(
+                        ChartRenderer.render(
+                            context, chartWidth.value, chartHeight.value, data.hourlyToday, data.currentHour, palette,
+                            scaleLabels = true, hourLabels = true,
+                        ),
+                    ),
                     contentDescription = context.getString(R.string.widget_chart_description),
                     contentScale = ContentScale.FillBounds,
                     modifier = GlanceModifier.width(chartWidth).height(chartHeight),
                 )
-                Row(modifier = GlanceModifier.fillMaxWidth().height(16.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = context.getString(
-                            if (data.hourlyYesterday != null) R.string.widget_legend else R.string.widget_legend_today_only,
-                        ),
-                        style = NavyText.small,
-                        maxLines = 1,
-                        modifier = GlanceModifier.defaultWeight(),
-                    )
-                    Text(
-                        text = context.getString(R.string.widget_updated_short, formatClock(data.updatedAt, data.zone)),
-                        style = NavyText.small,
-                        maxLines = 1,
-                    )
-                }
-            } else {
-                Spacer(GlanceModifier.height(4.dp))
-                Text(
-                    text = context.getString(R.string.widget_updated_at, formatClock(data.updatedAt, data.zone)),
-                    style = NavyText.small,
-                    maxLines = 1,
-                )
             }
         }
-
-        Box(modifier = GlanceModifier.width(1.dp).fillMaxHeight().background(NavyColors.divider)) {}
-
-        // Coluna direita
-        Column(
-            modifier = GlanceModifier.width(rightWidth).fillMaxHeight()
-                .padding(start = 12.dp, end = 14.dp, top = 12.dp, bottom = 8.dp),
-        ) {
-            Text(context.getString(R.string.widget_top_apps), style = NavyText.goldLabel, maxLines = 1)
+        Box(GlanceModifier.width(1.dp).fillMaxHeight().background(palette.divider)) {}
+        Column(GlanceModifier.width(rightWidth).fillMaxHeight().padding(start = 12.dp, end = 14.dp, top = 12.dp, bottom = 8.dp)) {
+            Text(context.getString(R.string.widget_top_apps), style = palette.style(10.sp, FontWeight.Bold, palette.accent), maxLines = 1)
             Spacer(GlanceModifier.height(8.dp))
             if (apps.isEmpty()) {
-                Text(context.getString(R.string.widget_no_usage), style = NavyText.bodyMuted)
+                Text(context.getString(R.string.widget_no_usage), style = palette.style(12.sp, color = palette.muted))
             } else {
                 val max = apps.first().millis.coerceAtLeast(1L)
-                apps.forEach { app -> NavyAppRow(app, fraction = app.millis.toFloat() / max) }
+                apps.forEach { app -> AppRow(app, palette, app.millis.toFloat() / max) }
             }
         }
     }
 }
 
 @Composable
-private fun NavyAppRow(app: WidgetApp, fraction: Float) {
-    Row(
-        modifier = GlanceModifier.fillMaxWidth().height(ROW_HEIGHT),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        val icon = app.icon
-        if (icon != null) {
-            Image(
-                provider = ImageProvider(icon),
-                contentDescription = null,
-                modifier = GlanceModifier.size(26.dp).cornerRadius(7.dp),
-            )
-        } else {
-            Box(
-                modifier = GlanceModifier.size(26.dp).background(NavyColors.tile).cornerRadius(7.dp),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(app.name.take(1).uppercase(), style = NavyText.small)
-            }
-        }
+private fun AppRow(app: WidgetApp, palette: WidgetPalette, fraction: Float) {
+    Row(GlanceModifier.fillMaxWidth().height(ROW), verticalAlignment = Alignment.CenterVertically) {
+        AppIconTile(app, palette, 24.dp)
         Spacer(GlanceModifier.width(8.dp))
-        Column(modifier = GlanceModifier.defaultWeight()) {
-            Row(modifier = GlanceModifier.fillMaxWidth()) {
-                Text(app.name, style = NavyText.appName, maxLines = 1, modifier = GlanceModifier.defaultWeight())
+        Column(GlanceModifier.defaultWeight()) {
+            Row(GlanceModifier.fillMaxWidth()) {
+                Text(app.name, style = palette.style(12.sp, FontWeight.Bold), maxLines = 1, modifier = GlanceModifier.defaultWeight())
                 Spacer(GlanceModifier.width(4.dp))
-                Text(formatDuration(app.millis), style = NavyText.appTime, maxLines = 1)
+                Text(formatShort(app.millis), style = palette.style(12.sp, color = palette.muted), maxLines = 1)
             }
             Spacer(GlanceModifier.height(4.dp))
             LinearProgressIndicator(
                 progress = fraction.coerceIn(0f, 1f),
                 modifier = GlanceModifier.fillMaxWidth().height(3.dp),
-                color = NavyColors.gold,
-                backgroundColor = NavyColors.track,
+                color = palette.accent,
+                backgroundColor = palette.track,
             )
         }
     }

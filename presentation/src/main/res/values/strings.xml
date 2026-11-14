@@ -182,7 +182,6 @@
     <string name="appearance_motion">Movimento</string>
     <string name="appearance_animations">Animações</string>
     <string name="appearance_animations_sub">números contando e gráficos crescendo. Se o Android estiver com animações desligadas, elas ficam desligadas aqui também.</string>
-    <string name="appearance_widgets_soon">Estilo, imagem de fundo e quantidade de apps dos widgets entram nesta tela na atualização dos widgets.</string>
 
     <!-- Painel (redesign) -->
     <string name="dash_hero_label">TEMPO DE TELA HOJE</string>
@@ -245,4 +244,38 @@
     <string name="week_note_above">acima da média</string>
     <string name="week_note_below">abaixo da média</string>
     <string name="detail_chart_legend">em destaque, o dia escolhido · linha tracejada = média</string>
+
+    <!-- Aparência › Widgets -->
+    <string name="appearance_widgets">Widgets</string>
+    <string name="appearance_widget_style">Estilo</string>
+    <string name="widget_style_navy">Marinho</string>
+    <string name="widget_style_light">Claro</string>
+    <string name="widget_style_transparent">Transp.</string>
+    <string name="widget_style_image">Imagem</string>
+    <string name="appearance_widget_apps">Apps no widget</string>
+    <string name="appearance_widget_apps_sub">no quadrado e no expandido</string>
+    <string name="appearance_widget_cmp">Comparação com ontem</string>
+    <string name="appearance_widget_cmp_sub">selo “▼ 18% vs ontem” no widget</string>
+    <string name="appearance_widget_note">As mudanças aparecem nos widgets da tela inicial em poucos segundos.</string>
+    <string name="appearance_image_preview">Prévia do widget com a sua imagem</string>
+    <string name="appearance_preview_today">HOJE</string>
+    <string name="appearance_image_none">Nenhuma imagem escolhida</string>
+    <string name="appearance_image_pick">Escolher da galeria</string>
+    <string name="appearance_image_change">Trocar imagem</string>
+    <string name="appearance_image_busy">Preparando…</string>
+    <string name="appearance_image_remove">Remover</string>
+    <string name="appearance_image_error">Não foi possível abrir essa imagem. Tente outra foto.</string>
+    <string name="appearance_image_focus">Enquadramento</string>
+    <string name="appearance_focus_top">Topo</string>
+    <string name="appearance_focus_center">Centro</string>
+    <string name="appearance_focus_bottom">Base</string>
+    <string name="appearance_image_dim">Escurecer</string>
+    <string name="appearance_image_dim_hint">deixa o texto legível em fotos claras</string>
+    <string name="appearance_image_blur">Desfoque</string>
+    <string name="appearance_image_blur_none">nenhum</string>
+    <string name="appearance_image_target">Aplicar em</string>
+    <string name="appearance_target_all">Todos</string>
+    <string name="appearance_target_square">Quadrado</string>
+    <string name="appearance_target_expanded">Expandido</string>
+    <string name="appearance_target_compact">Compacto</string>
 </resources>

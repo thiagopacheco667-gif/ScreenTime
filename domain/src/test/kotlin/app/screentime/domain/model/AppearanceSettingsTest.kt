@@ -24,4 +24,22 @@ class AppearanceSettingsTest {
         assertEquals(80, s.widgetImage.dimPercent)
         assertEquals(0, s.widgetImage.blurPx)
     }
+
+    @Test
+    fun `imagem so vale nos widgets escolhidos e com imagem salva`() {
+        val base = AppearanceSettings(
+            widgetStyle = WidgetStyle.Image,
+            widgetImage = WidgetImageSettings(hasImage = true, target = WidgetImageTarget.Square),
+        )
+        assertEquals(WidgetStyle.Image, base.styleFor(WidgetKind.Square))
+        assertEquals(WidgetStyle.Navy, base.styleFor(WidgetKind.Expanded))
+
+        val noImage = base.copy(widgetImage = base.widgetImage.copy(hasImage = false))
+        assertEquals(WidgetStyle.Navy, noImage.styleFor(WidgetKind.Square))
+
+        val all = base.copy(widgetImage = base.widgetImage.copy(target = WidgetImageTarget.All))
+        assertEquals(WidgetStyle.Image, all.styleFor(WidgetKind.Compact))
+
+        assertEquals(WidgetStyle.Light, AppearanceSettings(widgetStyle = WidgetStyle.Light).styleFor(WidgetKind.Square))
+    }
 }
