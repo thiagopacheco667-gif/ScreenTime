@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">ScreenTime</string>
-    <string name="setup_ok">Estrutura do projeto pronta. As telas chegam nas próximas etapas.</string>
 </resources>

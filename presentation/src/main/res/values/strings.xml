@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Tela de permissão -->
+    <string name="perm_title">Permitir acesso ao uso</string>
+    <string name="perm_intro">Para medir quanto tempo você passa em cada app, o ScreenTime precisa de um acesso especial do Android chamado \"Acesso ao uso\". Ele não aparece em um aviso comum: você liga nas configurações.</string>
+
+    <string name="perm_reads_title">O que o app lê</string>
+    <string name="perm_reads_1">Quais apps ficaram abertos na tela e em que horários.</string>
+    <string name="perm_reads_2">Quando a tela foi ligada, desligada ou bloqueada.</string>
+    <string name="perm_reads_3">Nome e ícone dos apps instalados, para mostrar na lista.</string>
+
+    <string name="perm_never_title">O que o app não lê</string>
+    <string name="perm_never_1">O conteúdo dos apps: mensagens, fotos, sites ou o que você digita.</string>
+    <string name="perm_never_2">Sua localização, contatos ou contas.</string>
+
+    <string name="perm_privacy_title">Onde os dados ficam</string>
+    <string name="perm_privacy_1">Só no seu celular. O app não tem permissão de internet, então não consegue enviar nada.</string>
+    <string name="perm_privacy_2">Os dados não entram no backup do Google. Desinstalar o app apaga tudo.</string>
+
+    <string name="perm_steps_title">Como liberar</string>
+    <string name="perm_step_1">Toque em \"Abrir configurações\".</string>
+    <string name="perm_step_2">Se aparecer uma lista, toque em ScreenTime.</string>
+    <string name="perm_step_3">Ative \"Permitir acesso ao uso\" e volte para o app.</string>
+
+    <string name="perm_open_settings">Abrir configurações</string>
+    <string name="perm_settings_failed">Não foi possível abrir a tela automaticamente. Abra Configurações, procure por \"Acesso ao uso\" na busca e ative o ScreenTime.</string>
+
+    <string name="perm_restricted_title">A opção aparece cinza?</string>
+    <string name="perm_restricted_body">Em alguns aparelhos, apps instalados fora da Play Store têm configurações restritas. Abra as informações do app, toque no menu ⋮ no canto superior e escolha \"Permitir configurações restritas\". Depois tente de novo.</string>
+    <string name="perm_open_app_info">Abrir informações do app</string>
+
+    <!-- Acesso concedido (temporário até a etapa do painel) -->
+    <string name="granted_title">Acesso concedido</string>
+    <string name="granted_body">O ScreenTime já pode ler os eventos de uso do seu celular. O painel com seus dados chega na próxima etapa do desenvolvimento.</string>
+    <string name="granted_revoke_title">Quer desligar?</string>
+    <string name="granted_revoke_body">Você pode revogar o acesso a qualquer momento nas mesmas configurações. O app volta para esta explicação na próxima vez que abrir.</string>
+    <string name="granted_open_settings">Revisar nas configurações</string>
+</resources>
