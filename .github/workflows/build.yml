@@ -43,7 +43,7 @@ jobs:
           gradle-version: "9.6.0"
 
       - name: Testes unitários do domínio
-        run: gradle :domain:test --stacktrace
+        run: gradle :domain:test --rerun --stacktrace
 
       - name: Compilar APK
         run: gradle :app:assembleDebug --stacktrace
