@@ -27,13 +27,15 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - name: Instalar SDK Platform 37
+      - name: Preparar Android SDK
         # O runner já traz o Android SDK; só faltam a plataforma 37 e as build-tools.
         run: |
           SDKM=$(ls -d "$ANDROID_HOME"/cmdline-tools/*/bin/sdkmanager | sort -V | tail -1)
           echo "Usando $SDKM"
           yes | "$SDKM" --licenses > /dev/null || true
-          "$SDKM" "platforms;android-37" "build-tools;36.0.0"
+          # Mostra as plataformas disponíveis (diagnóstico). O AGP baixa sozinho
+          # a plataforma do compileSdk, já com as licenças aceitas acima.
+          "$SDKM" --list 2>/dev/null | grep -E "platforms;android-3[6-9]" | sort -u || true
 
       - name: Instalar Gradle 9.6.0
         uses: gradle/actions/setup-gradle@v5
