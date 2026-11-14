@@ -114,7 +114,7 @@ private fun Ready(data: WidgetData.Ready, palette: WidgetPalette) {
     }
     Text(formatDuration(data.totalMillis), style = palette.style(26.sp, FontWeight.Medium), maxLines = 1)
     val percent = data.comparisonPercent
-    if (showCmp && percent != null) {
+    if (data.settings.widgetShowComparison && percent != null) {
         Text(
             comparisonText(percent, long = false, time = ""),
             style = palette.style(11.sp, FontWeight.Bold, if (percent <= 0) palette.better else palette.worse),

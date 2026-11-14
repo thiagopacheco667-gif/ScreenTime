@@ -139,7 +139,7 @@ private fun Body(data: WidgetData.Ready, palette: WidgetPalette, width: Dp, heig
         Column(GlanceModifier.width(leftWidth).fillMaxHeight().padding(start = 16.dp, end = 12.dp, top = 10.dp, bottom = 10.dp)) {
             Text(formatDuration(data.totalMillis), style = palette.style(32.sp, FontWeight.Medium), maxLines = 1)
             val percent = data.comparisonPercent
-            if (showCmp && percent != null) {
+            if (data.settings.widgetShowComparison && percent != null) {
                 Text(
                     comparisonText(percent, long = true, time = formatClock(data.updatedAt, data.zone)),
                     style = palette.style(11.sp, FontWeight.Bold, if (percent <= 0) palette.better else palette.worse),
