@@ -50,7 +50,7 @@ private const val TOP_APPS = 5
 @Composable
 fun DashboardRoute(
     viewModel: DashboardViewModel,
-    onOpenDiagnostics: () -> Unit,
+    onOpenSettings: () -> Unit,
     onOpenApp: (packageName: String, date: LocalDate) -> Unit,
     onPermissionLost: () -> Unit,
 ) {
@@ -65,14 +65,14 @@ fun DashboardRoute(
         DashboardUiState.Loading -> LoadingState()
         DashboardUiState.PermissionRequired -> LaunchedEffect(Unit) { onPermissionLost() }
         is DashboardUiState.Error -> ErrorState(s.message, viewModel::refresh)
-        is DashboardUiState.Content -> DashboardContent(s.dashboard, onOpenDiagnostics, onOpenApp)
+        is DashboardUiState.Content -> DashboardContent(s.dashboard, onOpenSettings, onOpenApp)
     }
 }
 
 @Composable
 private fun DashboardContent(
     dashboard: Dashboard,
-    onOpenDiagnostics: () -> Unit,
+    onOpenSettings: () -> Unit,
     onOpenApp: (String, LocalDate) -> Unit,
 ) {
     val today = dashboard.today
@@ -89,11 +89,17 @@ private fun DashboardContent(
     ) {
         // Cabeçalho: data, total e comparação.
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text(
-                text = formatLongDate(today.date),
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = formatLongDate(today.date),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.weight(1f),
+                )
+                TextButton(onClick = onOpenSettings) {
+                    Text(stringResource(R.string.dash_open_settings))
+                }
+            }
             Text(
                 text = formatDuration(today.totalMillis),
                 style = MaterialTheme.typography.displayLarge,
@@ -148,9 +154,6 @@ private fun DashboardContent(
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        TextButton(onClick = onOpenDiagnostics) {
-            Text(stringResource(R.string.dash_open_diagnostics))
-        }
     }
 }
 

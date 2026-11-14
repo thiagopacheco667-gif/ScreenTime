@@ -28,6 +28,7 @@ import app.screentime.presentation.apps.DayAppsRoute
 import app.screentime.presentation.dashboard.DashboardRoute
 import app.screentime.presentation.detail.AppDetailRoute
 import app.screentime.presentation.diagnostics.DiagnosticsRoute
+import app.screentime.presentation.settings.SettingsRoute
 import app.screentime.presentation.week.WeekRoute
 import app.screentime.ui.icons.ScreenTimeIcons
 import kotlinx.serialization.Serializable
@@ -45,6 +46,9 @@ data object WeekDestination
 
 @Serializable
 data object DiagnosticsDestination
+
+@Serializable
+data object SettingsDestination
 
 /** Apps de um dia ([epochDay] = LocalDate.toEpochDay()). */
 @Serializable
@@ -107,7 +111,7 @@ fun AppNavHost(
             composable<DashboardDestination> {
                 DashboardRoute(
                     viewModel = hiltViewModel(),
-                    onOpenDiagnostics = { navController.navigate(DiagnosticsDestination) },
+                    onOpenSettings = { navController.navigate(SettingsDestination) },
                     onOpenApp = openApp,
                     onPermissionLost = onPermissionLost,
                 )
@@ -140,6 +144,13 @@ fun AppNavHost(
                     viewModel = hiltViewModel(),
                     onBack = { navController.popBackStack() },
                     onPermissionLost = onPermissionLost,
+                )
+            }
+            composable<SettingsDestination> {
+                SettingsRoute(
+                    viewModel = hiltViewModel(),
+                    onBack = { navController.popBackStack() },
+                    onOpenDiagnostics = { navController.navigate(DiagnosticsDestination) },
                 )
             }
             composable<DiagnosticsDestination> {

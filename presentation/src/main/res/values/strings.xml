@@ -36,7 +36,7 @@
     <string name="diag_title">HOJE ATÉ AGORA</string>
     <string name="diag_summary">Atualizado às %1$s · %2$d apps · %3$d eventos</string>
     <string name="diag_notice_title">Tela de diagnóstico</string>
-    <string name="diag_notice_body">Esta tela mostra os dados reais lidos do sistema, para conferir a coleta. Para comparar, abra Configurações › Bem-estar digital. Diferenças de alguns minutos são esperadas: o Android não publica os critérios exatos que usa. O painel definitivo chega na próxima etapa.</string>
+    <string name="diag_notice_body">Esta tela mostra os dados reais lidos do sistema, para conferir a coleta. Para comparar, abra Configurações › Bem-estar digital. Diferenças de alguns minutos são esperadas: o Android não publica os critérios exatos que usa.</string>
     <string name="diag_refresh">Atualizar</string>
     <string name="diag_apps_title">Apps usados hoje</string>
     <string name="diag_apps_empty">Nenhum app em primeiro plano hoje até agora.</string>
@@ -85,7 +85,7 @@
     <string name="day_today">Hoje</string>
     <string name="day_yesterday">Ontem</string>
     <string name="apps_day_total">%1$s no total · %2$d apps</string>
-    <string name="apps_unavailable">O sistema não tem mais os dados deste dia. O histórico salvo no app chega na etapa de persistência.</string>
+    <string name="apps_unavailable">Sem dados deste dia. O Android apaga os eventos depois de alguns dias, e o app só guarda os dias a partir de quando passou a salvar o histórico.</string>
     <string name="apps_empty">Nenhum app foi usado neste dia.</string>
 
     <!-- Detalhe do app -->
@@ -108,7 +108,7 @@
     <string name="week_next">Próxima semana</string>
     <string name="week_average">Média diária: %1$s</string>
     <string name="week_days_with_data">%1$d de 7 dias com dados</string>
-    <string name="week_no_data">Sem dados nesta semana. O sistema guarda os eventos por poucos dias; o histórico salvo no app chega na próxima etapa.</string>
+    <string name="week_no_data">Sem dados nesta semana. O app guarda o histórico a partir de agora; antes disso, depende do que o Android ainda guarda (cerca de uma semana).</string>
     <string name="week_peak">Maior uso: %1$s, com %2$s</string>
     <string name="week_chart_a11y">Uso por dia na semana de %1$s, total %2$s</string>
     <string name="week_days_title">Dias</string>
@@ -116,4 +116,45 @@
     <string name="week_day_no_data">Sem dados</string>
     <string name="week_day_future">—</string>
     <string name="week_average_note">A média considera só os dias com dados, incluindo hoje até agora.</string>
+
+    <!-- Ajustes -->
+    <string name="dash_open_settings">Ajustes</string>
+    <string name="settings_title">Ajustes</string>
+    <string name="settings_background_title">Atualização em segundo plano</string>
+    <string name="settings_battery_ok">Bateria: sem restrições</string>
+    <string name="settings_battery_restricted">Bateria: com restrições</string>
+    <string name="settings_background_body">A cada 30 minutos o app salva os dias recentes e atualiza os widgets, mesmo fechado. Com a bateria restrita, o Android pode atrasar ou pausar essa atualização. Os números continuam corretos quando você abre o app.</string>
+    <string name="settings_last_sync">Última atualização em segundo plano: %1$s às %2$s</string>
+    <string name="settings_last_sync_never">A atualização em segundo plano ainda não rodou.</string>
+    <string name="settings_open_battery">Abrir otimização de bateria</string>
+    <string name="settings_xiaomi_title">No HyperOS (Xiaomi, Redmi, Poco)</string>
+    <string name="settings_xiaomi_1">Toque em "Informações do app" abaixo.</string>
+    <string name="settings_xiaomi_2">Em "Economia de bateria", escolha "Sem restrições".</string>
+    <string name="settings_xiaomi_3">Volte e ative "Início automático" (ou use o botão abaixo).</string>
+    <string name="settings_xiaomi_4">Opcional: na tela de apps recentes, segure o ScreenTime e toque no cadeado para o sistema não fechá-lo.</string>
+    <string name="settings_open_app_info">Informações do app</string>
+    <string name="settings_open_autostart">Início automático</string>
+    <string name="settings_history_title">Histórico salvo</string>
+    <plurals name="settings_history_days">
+        <item quantity="one">%1$d dia salvo, desde %2$s</item>
+        <item quantity="other">%1$d dias salvos, desde %2$s</item>
+    </plurals>
+    <string name="settings_history_empty">Nenhum dia salvo ainda.</string>
+    <string name="settings_history_body">O Android apaga os eventos detalhados depois de alguns dias. O app guarda o resumo de cada dia para o histórico semanal continuar disponível.</string>
+    <string name="settings_clear_button">Apagar histórico</string>
+    <string name="settings_clear_title">Apagar o histórico salvo?</string>
+    <string name="settings_clear_body">Os resumos guardados no app serão apagados e não há como desfazer. Os dias que o Android ainda guarda (cerca de uma semana) voltam a ser lidos na próxima atualização.</string>
+    <string name="settings_clear_confirm">Apagar</string>
+    <string name="settings_cancel">Cancelar</string>
+    <string name="settings_method_title">Como calculamos</string>
+    <string name="settings_method_1">Um app conta enquanto está aberto na tela, do momento em que abre até sair.</string>
+    <string name="settings_method_2">Só um app conta por vez. Em tela dividida, conta o app em foco.</string>
+    <string name="settings_method_3">Tela desligada ou bloqueada encerra a contagem.</string>
+    <string name="settings_method_4">Uso que atravessa a meia-noite é dividido entre os dois dias.</string>
+    <string name="settings_method_5">A tela inicial (launcher) e a interface do sistema não contam.</string>
+    <string name="settings_method_6">A comparação com ontem usa ontem até o mesmo horário de agora.</string>
+    <string name="settings_method_note">O Bem-estar digital do Android não publica os critérios que usa, então pequenas diferenças são esperadas.</string>
+    <string name="settings_privacy_3">Apagar o histórico aqui não afeta nenhum dado do sistema.</string>
+    <string name="settings_tools_title">Ferramentas</string>
+    <string name="settings_diagnostics">Diagnóstico da coleta</string>
 </resources>

@@ -4,8 +4,13 @@ import app.screentime.data.repository.UsageRepositoryImpl
 import app.screentime.data.time.SystemTimeSource
 import app.screentime.domain.engine.UsageCalculator
 import app.screentime.domain.repository.TimeSource
+import app.screentime.domain.repository.UsageAccessChecker
+import app.screentime.domain.repository.WidgetUpdater
 import app.screentime.domain.repository.UsageRepository
+import app.screentime.domain.usecase.ClearHistoryUseCase
 import app.screentime.domain.usecase.GetAppDetailUseCase
+import app.screentime.domain.usecase.GetStorageInfoUseCase
+import app.screentime.domain.usecase.SyncUsageUseCase
 import app.screentime.domain.usecase.GetDashboardUseCase
 import app.screentime.domain.usecase.GetDayEventsUseCase
 import app.screentime.domain.usecase.GetDayUsageUseCase
@@ -52,6 +57,21 @@ object DomainProviders {
     @Provides
     fun provideGetWeekUsage(repository: UsageRepository, time: TimeSource) =
         GetWeekUsageUseCase(repository, time)
+
+    @Provides
+    fun provideSyncUsage(
+        repository: UsageRepository,
+        accessChecker: UsageAccessChecker,
+        widgetUpdater: WidgetUpdater,
+        time: TimeSource,
+    ) = SyncUsageUseCase(repository, accessChecker, widgetUpdater, time)
+
+    @Provides
+    fun provideGetStorageInfo(repository: UsageRepository) = GetStorageInfoUseCase(repository)
+
+    @Provides
+    fun provideClearHistory(repository: UsageRepository, widgetUpdater: WidgetUpdater) =
+        ClearHistoryUseCase(repository, widgetUpdater)
 
     @Provides
     fun provideGetDashboard(repository: UsageRepository, time: TimeSource) =
