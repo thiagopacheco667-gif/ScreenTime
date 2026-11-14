@@ -77,7 +77,7 @@ class SquareWidgetReceiver : GlanceAppWidgetReceiver() {
 }
 
 private val PADDING = 12.dp
-private val TOP_ROW = 32.dp
+private val TOP_ROW = 28.dp
 
 @Composable
 private fun SquareContent(data: WidgetData, open: Intent, settings: Intent) {
@@ -170,7 +170,7 @@ private fun SquareContent(data: WidgetData, open: Intent, settings: Intent) {
     }
 }
 
-private val MIN_CHART = 28.dp
+private val MIN_CHART = 24.dp
 private val MAX_CHART = 72.dp
 
 @Composable
