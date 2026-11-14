@@ -17,4 +17,6 @@
     <string name="widget_legend">▮ hoje   ⁓ ontem</string>
     <string name="widget_legend_today_only">▮ uso por hora</string>
     <string name="widget_updated_short">às %1$s</string>
+    <string name="widget_square_name">ScreenTime quadrado</string>
+    <string name="widget_square_description">Tempo de hoje, gráfico por hora e os apps mais usados em 2×2</string>
 </resources>

@@ -84,6 +84,9 @@ internal object NavyText {
     val appName = TextStyle(color = NavyColors.text, fontSize = 12.sp, fontWeight = FontWeight.Medium)
     val appTime = TextStyle(color = NavyColors.text, fontSize = 12.sp)
     val small = TextStyle(color = NavyColors.muted, fontSize = 10.sp)
+    val totalSmall = TextStyle(color = NavyColors.text, fontSize = 24.sp, fontWeight = FontWeight.Normal)
+    val appNameSmall = TextStyle(color = NavyColors.text, fontSize = 11.sp, fontWeight = FontWeight.Medium)
+    val appTimeSmall = TextStyle(color = NavyColors.muted, fontSize = 11.sp)
     val body = TextStyle(color = NavyColors.text, fontSize = 13.sp, fontWeight = FontWeight.Medium)
     val bodyMuted = TextStyle(color = NavyColors.muted, fontSize = 12.sp)
 }

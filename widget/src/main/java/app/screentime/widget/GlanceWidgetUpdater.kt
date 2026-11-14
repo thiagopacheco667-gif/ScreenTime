@@ -15,5 +15,6 @@ class GlanceWidgetUpdater @Inject constructor(
     override suspend fun updateAll() {
         CompactWidget().updateAll(context)
         ExpandedWidget().updateAll(context)
+        SquareWidget().updateAll(context)
     }
 }

@@ -39,6 +39,7 @@ internal object ChartRenderer {
         today: List<Long>,
         yesterday: List<Long>?,
         currentHour: Int,
+        showLabels: Boolean = true,
     ): Bitmap {
         val density = context.resources.displayMetrics.density
         val w = (widthDp * density).roundToInt().coerceAtLeast(1)
@@ -51,11 +52,12 @@ internal object ChartRenderer {
             color = MUTED
             textSize = dp(9.5f) * context.resources.configuration.fontScale.coerceIn(0.85f, 1.3f)
         }
-        val labelRightWidth = label.measureText("60m") + dp(6f)
-        val labelBottomHeight = label.textSize + dp(5f)
+        // Sem rótulos (widget quadrado): o gráfico usa a área toda.
+        val labelRightWidth = if (showLabels) label.measureText("60m") + dp(6f) else 0f
+        val labelBottomHeight = if (showLabels) label.textSize + dp(5f) else dp(1f)
 
         val left = 0f
-        val top = label.textSize / 2f
+        val top = if (showLabels) label.textSize / 2f else dp(1f)
         val right = w - labelRightWidth
         val bottom = h - labelBottomHeight
         val plotHeight = (bottom - top).coerceAtLeast(1f)
@@ -76,8 +78,10 @@ internal object ChartRenderer {
         for (step in 0..2) {
             val gy = bottom - plotHeight * step / 2f
             canvas.drawLine(left, gy, right, gy, grid)
-            val text = if (step == 0) "0" else "${scale * step / 2}m"
-            canvas.drawText(text, right + dp(5f), gy + label.textSize / 3f, label)
+            if (showLabels) {
+                val text = if (step == 0) "0" else "${scale * step / 2}m"
+                canvas.drawText(text, right + dp(5f), gy + label.textSize / 3f, label)
+            }
         }
 
         // Marcas verticais pontilhadas e horários embaixo.
@@ -89,9 +93,11 @@ internal object ChartRenderer {
         for (hour in listOf(0, 6, 12, 18)) {
             val x = left + hour * slot
             canvas.drawLine(x, top, x, bottom, dashed)
-            val text = "%02d:00".format(hour)
-            val tx = (x + dp(1f)).coerceAtMost(w - label.measureText(text))
-            canvas.drawText(text, tx, h - dp(2f), label)
+            if (showLabels) {
+                val text = "%02d:00".format(hour)
+                val tx = (x + dp(1f)).coerceAtMost(w - label.measureText(text))
+                canvas.drawText(text, tx, h - dp(2f), label)
+            }
         }
 
         // Curva de ontem.
