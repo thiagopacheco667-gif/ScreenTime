@@ -7,7 +7,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.mutableIntStateOf
 import app.screentime.presentation.ScreenTimeRoot
-import app.screentime.ui.theme.ScreenTimeTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -21,9 +20,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         if (savedInstanceState == null) handleWidgetIntent(intent)
         setContent {
-            ScreenTimeTheme {
-                ScreenTimeRoot(openSettingsRequest = openSettingsRequests.intValue)
-            }
+            // O tema (Ajustes › Aparência) é aplicado dentro do ScreenTimeRoot.
+            ScreenTimeRoot(openSettingsRequest = openSettingsRequests.intValue)
         }
     }
 

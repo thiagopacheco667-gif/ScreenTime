@@ -24,6 +24,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import app.screentime.presentation.R
+import app.screentime.presentation.appearance.AppearanceRoute
 import app.screentime.presentation.apps.AppsRoute
 import app.screentime.presentation.apps.DayAppsRoute
 import app.screentime.presentation.dashboard.DashboardRoute
@@ -50,6 +51,9 @@ data object DiagnosticsDestination
 
 @Serializable
 data object SettingsDestination
+
+@Serializable
+data object AppearanceDestination
 
 /** Apps de um dia ([epochDay] = LocalDate.toEpochDay()). */
 @Serializable
@@ -160,6 +164,13 @@ fun AppNavHost(
                     viewModel = hiltViewModel(),
                     onBack = { navController.popBackStack() },
                     onOpenDiagnostics = { navController.navigate(DiagnosticsDestination) },
+                    onOpenAppearance = { navController.navigate(AppearanceDestination) },
+                )
+            }
+            composable<AppearanceDestination> {
+                AppearanceRoute(
+                    viewModel = hiltViewModel(),
+                    onBack = { navController.popBackStack() },
                 )
             }
             composable<DiagnosticsDestination> {

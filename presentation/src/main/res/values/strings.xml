@@ -157,4 +157,30 @@
     <string name="settings_privacy_3">Apagar o histórico aqui não afeta nenhum dado do sistema.</string>
     <string name="settings_tools_title">Ferramentas</string>
     <string name="settings_diagnostics">Diagnóstico da coleta</string>
+
+    <!-- Aparência -->
+    <string name="appearance_title">Aparência</string>
+    <string name="appearance_entry_sub">Tema, cor de destaque, fonte e animações</string>
+    <string name="appearance_preview">Prévia</string>
+    <string name="appearance_preview_label">TEMPO DE TELA HOJE</string>
+    <string name="appearance_preview_example">exemplo</string>
+    <string name="appearance_theme">Tema</string>
+    <string name="appearance_theme_system">Sistema</string>
+    <string name="appearance_theme_light">Claro</string>
+    <string name="appearance_theme_dark">Escuro</string>
+    <string name="appearance_accent">Cor de destaque</string>
+    <string name="accent_gold">Dourado</string>
+    <string name="accent_blue">Azul</string>
+    <string name="accent_green">Verde</string>
+    <string name="accent_coral">Coral</string>
+    <string name="accent_lilac">Lilás</string>
+    <string name="appearance_font">Fonte</string>
+    <string name="appearance_font_app">Fonte do ScreenTime</string>
+    <string name="appearance_font_app_sub">Manrope · igual em qualquer celular</string>
+    <string name="appearance_font_system">Fonte do sistema</string>
+    <string name="appearance_font_system_sub">usa a fonte escolhida no tema do celular</string>
+    <string name="appearance_motion">Movimento</string>
+    <string name="appearance_animations">Animações</string>
+    <string name="appearance_animations_sub">números contando e gráficos crescendo. Se o Android estiver com animações desligadas, elas ficam desligadas aqui também.</string>
+    <string name="appearance_widgets_soon">Estilo, imagem de fundo e quantidade de apps dos widgets entram nesta tela na atualização dos widgets.</string>
 </resources>

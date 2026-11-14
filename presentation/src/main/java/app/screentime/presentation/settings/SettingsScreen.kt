@@ -46,6 +46,7 @@ fun SettingsRoute(
     viewModel: SettingsViewModel,
     onBack: () -> Unit,
     onOpenDiagnostics: () -> Unit,
+    onOpenAppearance: () -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -86,6 +87,28 @@ fun SettingsRoute(
             Icon(ScreenTimeIcons.Back, contentDescription = stringResource(R.string.nav_back))
         }
         Text(stringResource(R.string.settings_title), style = MaterialTheme.typography.headlineMedium)
+
+        Surface(
+            onClick = onOpenAppearance,
+            shape = MaterialTheme.shapes.large,
+            color = app.screentime.ui.theme.ScreenTimeTheme.colors.card,
+            border = androidx.compose.foundation.BorderStroke(1.dp, app.screentime.ui.theme.ScreenTimeTheme.colors.cardBorder),
+        ) {
+            Row(
+                modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
+                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+            ) {
+                Column(Modifier.weight(1f)) {
+                    Text(stringResource(R.string.appearance_title), style = MaterialTheme.typography.titleMedium)
+                    Text(
+                        stringResource(R.string.appearance_entry_sub),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                Icon(ScreenTimeIcons.Forward, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+        }
 
         // Segundo plano e bateria
         InfoCard(title = stringResource(R.string.settings_background_title)) {
