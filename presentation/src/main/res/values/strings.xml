@@ -58,4 +58,19 @@
     <string name="event_keyguard_hidden">Desbloqueio</string>
     <string name="event_shutdown">Desligando</string>
     <string name="event_startup">Ligou</string>
+
+    <!-- Painel -->
+    <string name="dash_hourly_title">Uso por hora</string>
+    <string name="dash_hourly_a11y">Gráfico do uso por hora hoje, total %1$s</string>
+    <string name="dash_peak_hour">Hora de maior uso: %1$dh, com %2$s</string>
+    <string name="dash_top_title">Mais usados hoje</string>
+    <string name="dash_cmp_more">%1$d%% a mais que ontem até %2$s</string>
+    <string name="dash_cmp_less">%1$d%% a menos que ontem até %2$s</string>
+    <string name="dash_cmp_same">Igual a ontem até %1$s</string>
+    <string name="dash_cmp_no_baseline">Ontem não houve uso até %1$s</string>
+    <string name="dash_cmp_unavailable">Sem dados de ontem para comparar</string>
+    <string name="dash_yesterday_total">Ontem, no dia inteiro: %1$s</string>
+    <string name="dash_yesterday_unavailable">O sistema não tem mais os dados de ontem</string>
+    <string name="dash_updated_at">Atualizado às %1$s</string>
+    <string name="dash_open_diagnostics">Ver diagnóstico da coleta</string>
 </resources>

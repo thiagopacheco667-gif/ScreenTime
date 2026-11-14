@@ -14,8 +14,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.screentime.permissions.UsageAccessSettings
-import app.screentime.presentation.diagnostics.DiagnosticsRoute
-import app.screentime.presentation.diagnostics.DiagnosticsViewModel
+import app.screentime.presentation.navigation.AppNavHost
 import app.screentime.presentation.permission.PermissionScreen
 import app.screentime.presentation.permission.PermissionViewModel
 
@@ -42,10 +41,8 @@ fun ScreenTimeRoot(
         color = MaterialTheme.colorScheme.background,
     ) {
         if (hasAccess) {
-            val diagnosticsViewModel: DiagnosticsViewModel = hiltViewModel()
-            DiagnosticsRoute(
-                viewModel = diagnosticsViewModel,
-                onOpenSettings = { UsageAccessSettings.open(context) },
+            AppNavHost(
+                onOpenUsageSettings = { UsageAccessSettings.open(context) },
                 onPermissionLost = permissionViewModel::refresh,
             )
         } else {

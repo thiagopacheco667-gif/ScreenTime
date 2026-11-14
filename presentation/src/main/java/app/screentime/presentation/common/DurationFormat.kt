@@ -28,3 +28,10 @@ fun formatClock(instant: Instant, zone: ZoneId): String =
 
 fun formatClockSeconds(epochMillis: Long, zone: ZoneId): String =
     HOUR_MINUTE_SECOND.format(Instant.ofEpochMilli(epochMillis).atZone(zone))
+
+private val LONG_DATE: DateTimeFormatter =
+    DateTimeFormatter.ofPattern("EEEE, d 'de' MMMM", java.util.Locale.forLanguageTag("pt-BR"))
+
+/** "Sábado, 14 de novembro" */
+fun formatLongDate(date: java.time.LocalDate): String =
+    LONG_DATE.format(date).replaceFirstChar { it.titlecase(java.util.Locale.forLanguageTag("pt-BR")) }
