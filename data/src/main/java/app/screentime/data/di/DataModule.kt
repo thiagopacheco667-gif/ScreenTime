@@ -1,0 +1,45 @@
+package app.screentime.data.di
+
+import app.screentime.data.repository.UsageRepositoryImpl
+import app.screentime.data.time.SystemTimeSource
+import app.screentime.domain.engine.UsageCalculator
+import app.screentime.domain.repository.TimeSource
+import app.screentime.domain.repository.UsageRepository
+import app.screentime.domain.usecase.GetDayEventsUseCase
+import app.screentime.domain.usecase.GetDayUsageUseCase
+import dagger.Binds
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class DataBindings {
+
+    @Binds
+    abstract fun bindUsageRepository(impl: UsageRepositoryImpl): UsageRepository
+
+    @Binds
+    abstract fun bindTimeSource(impl: SystemTimeSource): TimeSource
+}
+
+/**
+ * As classes do :domain são Kotlin puro e não usam anotações do Dagger,
+ * então são criadas aqui.
+ */
+@Module
+@InstallIn(SingletonComponent::class)
+object DomainProviders {
+
+    @Provides
+    @Singleton
+    fun provideUsageCalculator(): UsageCalculator = UsageCalculator()
+
+    @Provides
+    fun provideGetDayUsage(repository: UsageRepository) = GetDayUsageUseCase(repository)
+
+    @Provides
+    fun provideGetDayEvents(repository: UsageRepository) = GetDayEventsUseCase(repository)
+}

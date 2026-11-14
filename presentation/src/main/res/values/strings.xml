@@ -29,10 +29,33 @@
     <string name="perm_restricted_body">Em alguns aparelhos, apps instalados fora da Play Store têm configurações restritas. Abra as informações do app, toque no menu ⋮ no canto superior e escolha \"Permitir configurações restritas\". Depois tente de novo.</string>
     <string name="perm_open_app_info">Abrir informações do app</string>
 
-    <!-- Acesso concedido (temporário até a etapa do painel) -->
-    <string name="granted_title">Acesso concedido</string>
-    <string name="granted_body">O ScreenTime já pode ler os eventos de uso do seu celular. O painel com seus dados chega na próxima etapa do desenvolvimento.</string>
-    <string name="granted_revoke_title">Quer desligar?</string>
-    <string name="granted_revoke_body">Você pode revogar o acesso a qualquer momento nas mesmas configurações. O app volta para esta explicação na próxima vez que abrir.</string>
-    <string name="granted_open_settings">Revisar nas configurações</string>
+    <!-- Revisar permissão -->
+    <string name="granted_open_settings">Revisar permissão</string>
+
+    <!-- Diagnóstico (etapa 4: conferência da coleta) -->
+    <string name="diag_title">HOJE ATÉ AGORA</string>
+    <string name="diag_summary">Atualizado às %1$s · %2$d apps · %3$d eventos</string>
+    <string name="diag_notice_title">Tela de diagnóstico</string>
+    <string name="diag_notice_body">Esta tela mostra os dados reais lidos do sistema, para conferir a coleta. Para comparar, abra Configurações › Bem-estar digital. Diferenças de alguns minutos são esperadas: o Android não publica os critérios exatos que usa. O painel definitivo chega na próxima etapa.</string>
+    <string name="diag_refresh">Atualizar</string>
+    <string name="diag_apps_title">Apps usados hoje</string>
+    <string name="diag_apps_empty">Nenhum app em primeiro plano hoje até agora.</string>
+    <string name="diag_events_title">Eventos do sistema (%1$d mais recentes de %2$d)</string>
+    <plurals name="diag_sessions">
+        <item quantity="one">%1$d sessão · última %2$s</item>
+        <item quantity="other">%1$d sessões · última %2$s</item>
+    </plurals>
+    <string name="diag_error_title">Não foi possível ler os dados</string>
+    <string name="diag_retry">Tentar de novo</string>
+
+    <!-- Tipos de evento -->
+    <string name="event_resumed">Abriu</string>
+    <string name="event_paused">Pausou</string>
+    <string name="event_stopped">Saiu da tela</string>
+    <string name="event_screen_on">Tela ligada</string>
+    <string name="event_screen_off">Tela desligada</string>
+    <string name="event_keyguard_shown">Bloqueio</string>
+    <string name="event_keyguard_hidden">Desbloqueio</string>
+    <string name="event_shutdown">Desligando</string>
+    <string name="event_startup">Ligou</string>
 </resources>

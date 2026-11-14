@@ -1,5 +1,6 @@
 package app.screentime.presentation
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -8,13 +9,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.screentime.permissions.UsageAccessSettings
-import app.screentime.presentation.permission.AccessGrantedScreen
+import app.screentime.presentation.diagnostics.DiagnosticsRoute
+import app.screentime.presentation.diagnostics.DiagnosticsViewModel
 import app.screentime.presentation.permission.PermissionScreen
 import app.screentime.presentation.permission.PermissionViewModel
 
@@ -41,8 +42,11 @@ fun ScreenTimeRoot(
         color = MaterialTheme.colorScheme.background,
     ) {
         if (hasAccess) {
-            AccessGrantedScreen(
+            val diagnosticsViewModel: DiagnosticsViewModel = hiltViewModel()
+            DiagnosticsRoute(
+                viewModel = diagnosticsViewModel,
                 onOpenSettings = { UsageAccessSettings.open(context) },
+                onPermissionLost = permissionViewModel::refresh,
             )
         } else {
             PermissionScreen(
