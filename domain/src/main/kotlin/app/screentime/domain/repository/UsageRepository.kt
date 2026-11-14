@@ -21,6 +21,9 @@ interface UsageRepository {
      */
     suspend fun dayUsage(date: LocalDate, upTo: Instant? = null): DayUsage
 
+    /** Só o dia salvo no banco, sem recalcular (leitura rápida para os widgets). */
+    suspend fun cachedDayUsage(date: LocalDate): DayUsage?
+
     /** Eventos brutos do dia, do mais antigo para o mais recente (tela de diagnóstico). */
     suspend fun dayEvents(date: LocalDate): List<UsageEvent>
 

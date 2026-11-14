@@ -71,6 +71,9 @@ class UsageRepositoryImpl @Inject constructor(
             decision.result
         }
 
+    override suspend fun cachedDayUsage(date: LocalDate): DayUsage? =
+        withContext(Dispatchers.IO) { loadStored(date) }
+
     override suspend fun dayEvents(date: LocalDate): List<UsageEvent> =
         withContext(Dispatchers.IO) {
             ensureAccess()
