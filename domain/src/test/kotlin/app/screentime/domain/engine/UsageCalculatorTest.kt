@@ -75,6 +75,7 @@ class UsageCalculatorTest {
             resumed(t(10, 10) + 200, "A", "Detail"),
             stopped(t(10, 10, 1), "A", "Main"),
             paused(t(10, 20), "A", "Detail"),
+            stopped(t(10, 20) + 300, "A", "Detail"),
         )
         val r = compute(events, now = t(12, 0))
         assertEquals(20, r.minutes("A"))
