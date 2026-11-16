@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- updatePeriodMillis=0: quem atualiza é o WorkManager (a cada 30 min) e o próprio app. -->
+<!-- updatePeriodMillis=30 min: segunda via, do próprio sistema de widgets, além do WorkManager e do app. -->
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:description="@string/widget_compact_description"
     android:initialLayout="@layout/glance_default_loading_layout"
@@ -10,5 +10,5 @@
     android:resizeMode="horizontal|vertical"
     android:targetCellWidth="2"
     android:targetCellHeight="1"
-    android:updatePeriodMillis="0"
+    android:updatePeriodMillis="1800000"
     android:widgetCategory="home_screen" />

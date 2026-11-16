@@ -17,8 +17,8 @@ import app.screentime.domain.model.DayUsage
  */
 object DayPersistencePolicy {
 
-    /** Suba ao mudar regras de cálculo que alteram dias já salvos. 2 = contagem de aberturas revisada. */
-    const val CURRENT_CALC_VERSION = 2
+    /** Suba ao mudar regras de cálculo que alteram dias já salvos. 2 = contagem de aberturas revisada; 3 = tempo visível sem foco (janela flutuante). */
+    const val CURRENT_CALC_VERSION = 3
 
     /**
      * @param save gravar [result] como dia novo.

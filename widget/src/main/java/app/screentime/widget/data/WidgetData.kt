@@ -67,8 +67,9 @@ data class WidgetApp(
 )
 
 /**
- * Lê o dia de hoje para os widgets. Usa o resumo salvo pelo worker (rápido);
- * sem resumo de hoje (widget recém-adicionado ou dia que virou), calcula e salva.
+ * Lê o dia de hoje para os widgets. Recalcula a partir dos eventos a cada desenho,
+ * para nunca mostrar um resumo antigo quando a atualização em segundo plano não
+ * rodou (o HyperOS costuma segurá-la). O recálculo também salva o resumo.
  */
 class WidgetDataSource @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -87,7 +88,7 @@ class WidgetDataSource @Inject constructor(
 
         val today = time.today()
         val day = try {
-            repository.cachedDayUsage(today) ?: repository.dayUsage(today)
+            repository.dayUsage(today)
         } catch (_: UsageAccessMissingException) {
             return WidgetData.NoAccess(settings, path, version, imagePalette)
         }

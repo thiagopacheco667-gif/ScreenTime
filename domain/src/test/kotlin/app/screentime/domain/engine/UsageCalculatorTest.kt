@@ -277,6 +277,66 @@ class UsageCalculatorTest {
         assertEquals(r.totalMillis, r.hourlyMillis.sum())
     }
 
+    @Test
+    fun `video em janela flutuante continua contando para o app`() {
+        // YouTube entra em picture-in-picture às 10:10 e o usuário abre o B.
+        // A janela some às 10:40 (ActivityStopped). Caso real de 16/11.
+        val events = listOf(
+            resumed(t(10, 0), "yt"),
+            paused(t(10, 10), "yt"),
+            resumed(t(10, 10) + 300, "B"),
+            paused(t(10, 30), "B"),
+            stopped(t(10, 30) + 400, "B"),
+            resumed(t(10, 30) + 200, "C"),
+            stopped(t(10, 40), "yt"),
+            paused(t(10, 50), "C"),
+            stopped(t(10, 50) + 400, "C"),
+        )
+        val r = compute(events, now = t(12, 0))
+        assertEquals(40, r.minutes("yt"))
+        assertEquals(1, r.sessions("yt"))
+        assertEquals(20, r.minutes("B"))
+        // O total é o tempo de tela, sem contar a sobreposição duas vezes.
+        assertEquals(50, r.totalMinutes)
+    }
+
+    @Test
+    fun `sair normalmente nao deixa tempo sobrando`() {
+        val events = listOf(
+            resumed(t(10, 0), "A"),
+            paused(t(10, 10), "A"),
+            resumed(t(10, 10) + 100, "launcher"),
+            stopped(t(10, 10) + 500, "A"),
+        )
+        val r = compute(events, now = t(12, 0), excluded = setOf("launcher"))
+        assertEquals(10 * MIN + 500, r.apps.first { it.packageName == "A" }.foregroundMillis)
+    }
+
+    @Test
+    fun `tela desligada encerra a janela flutuante`() {
+        val events = listOf(
+            resumed(t(10, 0), "yt"),
+            paused(t(10, 10), "yt"),
+            resumed(t(10, 10) + 300, "B"),
+            stopped(t(10, 11), "B"),
+            ev(t(10, 20), UsageEventType.ScreenNonInteractive),
+        )
+        val r = compute(events, now = t(12, 0))
+        assertEquals(20, r.minutes("yt"))
+    }
+
+    @Test
+    fun `sem eventos de saida (Android 9) a pausa encerra o app`() {
+        val events = listOf(
+            resumed(t(10, 0), "yt"),
+            paused(t(10, 10), "yt"),
+            resumed(t(10, 10) + 300, "B"),
+            paused(t(10, 30), "B"),
+        )
+        val r = compute(events, now = t(12, 0))
+        assertEquals(10, r.minutes("yt"))
+    }
+
     private companion object {
         const val MIN = 60_000L
     }

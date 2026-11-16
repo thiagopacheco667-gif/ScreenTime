@@ -21,6 +21,11 @@ import app.screentime.domain.model.UsageEventType
  * 6. O que ainda estiver aberto no fim da janela fecha no fim da janela
  *    (normalmente "agora").
  * 7. Sessões do mesmo app separadas por até [mergeGapMillis] viram uma só.
+ * 8. Uma tela que perdeu o foco mas continua visível (vídeo em janela flutuante,
+ *    outro app aberto por cima sem cobrir tudo) segue contando, sem foco, até o
+ *    sistema registrar que ela saiu da tela (ActivityStopped), até o próprio app
+ *    voltar ao foco ou até a tela desligar. Só vale quando o sistema registra
+ *    esse evento de saída (Android 10+); antes disso a regra 2 decide sozinha.
  */
 class SessionBuilder(
     private val mergeGapMillis: Long = DEFAULT_MERGE_GAP_MILLIS,
@@ -34,7 +39,11 @@ class SessionBuilder(
             .filter { it.timestamp in windowStart..windowEnd }
             .sortedBy { it.timestamp }
 
+        val tracksVisibility = sorted.any { it.type == UsageEventType.ActivityStopped }
+
         val activeClasses = HashMap<String, MutableSet<String>>()
+        // Telas pausadas que ainda estão visíveis: pacote -> (tela -> desde quando).
+        val visibleSince = HashMap<String, HashMap<String, Long>>()
         val openSince = LinkedHashMap<String, Long>()
         val seen = HashSet<String>()
         val result = ArrayList<Session>()
@@ -50,9 +59,18 @@ class SessionBuilder(
             if (at > start) result += Session(pkg, start, at)
         }
 
+        fun endVisible(pkg: String, cls: String?, at: Long) {
+            val screens = visibleSince[pkg] ?: return
+            val starts = if (cls == null) screens.values.toList() else listOfNotNull(screens.remove(cls))
+            if (cls == null) screens.clear()
+            for (start in starts) if (at > start) result += Session(pkg, start, at, focused = false)
+            if (screens.isEmpty()) visibleSince.remove(pkg)
+        }
+
         fun closeAll(at: Long) {
             for (pkg in openSince.keys.toList()) close(pkg, at)
             activeClasses.clear()
+            for (pkg in visibleSince.keys.toList()) endVisible(pkg, null, at)
         }
 
         for (event in sorted) {
@@ -66,6 +84,8 @@ class SessionBuilder(
                     for (other in openSince.keys.toList()) {
                         if (other != pkg) close(other, ts)
                     }
+                    // O próprio app voltou ao foco: o tempo sem foco termina aqui.
+                    endVisible(pkg, null, ts)
                     activeClasses.getOrPut(pkg) { HashSet() }.add(cls)
                     openSince.putIfAbsent(pkg, ts)
                     seen += pkg
@@ -73,9 +93,15 @@ class SessionBuilder(
 
                 UsageEventType.ActivityPaused,
                 UsageEventType.ActivityStopped -> {
+                    val isStop = event.type == UsageEventType.ActivityStopped
                     val classes = activeClasses[pkg]
-                    if (classes != null && classes.remove(cls)) {
+                    if (isStop && visibleSince[pkg]?.containsKey(cls) == true) {
+                        endVisible(pkg, cls, ts)
+                    } else if (classes != null && classes.remove(cls)) {
                         if (classes.isEmpty()) close(pkg, ts)
+                        if (!isStop && tracksVisibility) {
+                            visibleSince.getOrPut(pkg) { HashMap() }[cls] = ts
+                        }
                     } else if (pkg !in seen) {
                         val end = minOf(ts, firstBoundary ?: ts)
                         if (end > windowStart) result += Session(pkg, windowStart, end)
@@ -105,20 +131,26 @@ class SessionBuilder(
         return merge(result)
     }
 
+    /** Junta sessões do mesmo app e do mesmo tipo (com ou sem foco) que se tocam. */
     private fun merge(sessions: List<Session>): List<Session> {
         val out = ArrayList<Session>(sessions.size)
+        val lastIndex = HashMap<Pair<String, Boolean>, Int>()
         for (s in sessions.sortedBy { it.start }) {
-            val last = out.lastOrNull()
-            if (last != null &&
-                last.packageName == s.packageName &&
-                s.start - last.end <= mergeGapMillis
-            ) {
-                out[out.lastIndex] = last.copy(end = maxOf(last.end, s.end))
+            val key = s.packageName to s.focused
+            val i = lastIndex[key]
+            val last = i?.let { out[it] }
+            // Só junta com a sessão anterior do mesmo app se nenhum outro app em foco
+            // apareceu no meio (as sem foco não separam nada).
+            val adjacent = last != null && s.start - last.end <= mergeGapMillis &&
+                (!s.focused || out.subList(i + 1, out.size).none { it.focused })
+            if (adjacent) {
+                out[i!!] = last!!.copy(end = maxOf(last.end, s.end))
             } else {
+                lastIndex[key] = out.size
                 out += s
             }
         }
-        return out
+        return out.sortedBy { it.start }
     }
 
     companion object {

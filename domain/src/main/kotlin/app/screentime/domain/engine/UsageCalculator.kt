@@ -54,9 +54,10 @@ class UsageCalculator(
             .mapNotNull { s ->
                 val start = maxOf(s.start, dayStart)
                 val end = minOf(s.end, limitEnd)
-                if (end > start) Session(s.packageName, start, end) else null
+                if (end > start) s.copy(start = start, end = end) else null
             }
-        val opens = openCounter.count(allClipped)
+        // Aberturas só olham o tempo em foco: um vídeo flutuante não "abre" o app de novo.
+        val opens = openCounter.count(allClipped.filter { it.focused })
         val clipped = allClipped.filter { it.packageName !in excludedPackages }
 
         val apps = clipped
@@ -65,8 +66,8 @@ class UsageCalculator(
                 AppUsage(
                     packageName = pkg,
                     label = labelOf(pkg),
-                    foregroundMillis = sessions.sumOf { it.durationMillis },
-                    sessionCount = opens[pkg] ?: sessions.size,
+                    foregroundMillis = union(sessions).sumOf { it.second - it.first },
+                    sessionCount = opens[pkg] ?: sessions.count { it.focused }.coerceAtLeast(1),
                     lastUsedAt = Instant.ofEpochMilli(sessions.maxOf { it.end }),
                 )
             }
